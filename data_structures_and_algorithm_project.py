@@ -11,6 +11,14 @@
     # 3. Insert the nodes into the binary tree accordingly.
     # 4. Generate the created binary tree and display it along with its traversals (in-order, pre-order, post-order). 
 
+import tkinter as tk
+
+root = tk.Tk()
+root.title("Binary Tree")
+root.geometry("1920x1080")
+
+root.mainloop()
+
 # Program 4: Binary Search Tree
     # In this program, the user will input numbers to create a binary search tree (BST).
     # 1. Ask the user to input specific number of digits they want to insert into the BST.
