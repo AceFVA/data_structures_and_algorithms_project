@@ -13,7 +13,7 @@
 
 import tkinter as tk
 
-class BinaryTreeGUI:
+class BinaryTreeApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Binary Tree")
@@ -22,14 +22,21 @@ class BinaryTreeGUI:
         self.main_frame = tk.Frame(self.root)
         self.main_frame.pack(side = tk.TOP, fill = tk.Y, expand = True, padx = (20, 20), pady = (20, 200))
 
-        self.canvas = tk.Canvas(self.main_frame, width = 1200, height = 700, bg = "blue", bd = 2, relief = tk.RIDGE)
-        self.canvas.pack(side = tk.LEFT, padx = (20,0), pady = 20)
+        self.binary_tree_canvas = tk.Canvas(self.main_frame, width = 1200, height = 700, bg = "blue", bd = 2, relief = tk.RIDGE)
+        self.binary_tree_canvas.pack(side = tk.LEFT, padx = (20,0), pady = 20)
 
         self.button_frame = tk.Frame(self.main_frame, width = 720, height = 700, bd = 2, relief = tk.RIDGE)
         self.button_frame.pack(side = tk.RIGHT, padx = (0, 20), pady = 20)
         self.button_frame.pack_propagate(0)
 
         self.control_buttons()
+
+        self.traversal_result_frame = tk.Frame(self.root, width = 1920, height = 380, bg = "lightgray", bd = 2, relief = tk.RIDGE)
+        self.traversal_result_frame.pack(side = tk.BOTTOM, fill = tk.X, padx = (20,20), pady = (0,20))
+        self.traversal_result_frame.pack_propagate(0)
+
+        self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "Traversal Result: ", font = ("Segoe UI", 14), bg = "lightgray")
+        self.traversal_result_label.pack(pady = 20)
 
     def control_buttons(self):
         tk.Label(self.button_frame, text = "Number of Levels:", font = ("Segoe UI", 11)).pack(side = tk.TOP, pady = (5,5))
@@ -46,14 +53,14 @@ class BinaryTreeGUI:
         tk.Button(self.button_frame, text = "Postorder", bg = "purple", fg = "white", width = 20, command = lambda: self.start_traversal("post")).pack(pady = 5)
 
     def draw_tree(self):
-        self.canvas.delete("all")
-        self.result_label.config(text = "Traversal Result: (tree would be drawn here)")
+        self.binary_tree_canvas.delete("all")
+        self.binary_tree_canvas.create_text(600, 350, text = "(Tree would be drawn here)", font = ("Segoe UI", 20), fill = "white")
 
     def start_traversal(self, mode):
-        self.result_label.config(text = f"Traversal Result: ({mode} traversal)")
+        self.traversal_result_label.config(text = f"Traversal Result: ({mode} traversal)")
 
 root = tk.Tk()
-app = BinaryTreeGUI(root)
+app = BinaryTreeApp(root)
 root.mainloop()
 
 # Program 4: Binary Search Tree
