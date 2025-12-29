@@ -25,7 +25,7 @@ class BinaryTreeApp:
         self.main_frame.pack(side = tk.TOP, fill = tk.Y, expand = True, padx = (20, 20), pady = (20, 200))
 
 # Canvas for Binary Tree Visualization
-        self.binary_tree_canvas = tk.Canvas(self.main_frame, width = 1200, height = 700, bg = "blue", bd = 2, relief = tk.RIDGE)
+        self.binary_tree_canvas = tk.Canvas(self.main_frame, width = 1200, height = 700, bg = "white", bd = 2, relief = tk.RIDGE)
         self.binary_tree_canvas.pack(side = tk.LEFT, padx = (20, 0), pady = 20)
 
 # Control Buttons Frame
@@ -47,7 +47,7 @@ class BinaryTreeApp:
     def control_buttons(self):
         tk.Label(self.button_frame, text = "Number of Levels:", font = ("Segoe UI", 11)).pack(side = tk.TOP, pady = (5, 5))
         self.level_entry = tk.Entry(self.button_frame, width = 15, justify = "center")
-        self.level_entry.insert(0, "1")
+        self.level_entry.insert(0, "5")
         self.level_entry.pack(pady = (0, 20))
 
         tk.Button(self.button_frame, text = "Draw Tree", bg = "green", fg = "white", width = 20, height = 2, command = self.draw_tree).pack(pady = 10)
@@ -72,8 +72,26 @@ class BinaryTreeApp:
         except ValueError:
             self.binary_tree_canvas.create_text(600, 350, text = "Please enter a valid positive integer for levels.", font = ("Segoe UI", 16), fill = "red")
             return
+        
+        canvas_width = 1200
+        node_radius = 20
+        vertical_spacing = 100
 
-        self.binary_tree_canvas.create_text(600, 350, text = "(Tree would be drawn here)", font = ("Segoe UI", 20), fill = "white")
+        node_positions = []
+
+        for level in range(levels):
+            node_count = 2 ** level
+            vertical_position = (level + 1) * vertical_spacing
+            level_node_positions = []
+
+            for node in range(node_count):
+                horizontal_spacing = canvas_width // (node_count + 1)
+                horizontal_position = (node + 1) * horizontal_spacing
+                level_node_positions.append((horizontal_position, vertical_position))
+
+                self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow")
+
+            node_positions.append(level_node_positions)
 
 # Identify traversal type and display result
     def traversals(self, mode):
