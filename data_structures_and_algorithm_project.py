@@ -26,7 +26,7 @@ class BinaryTreeApp:
 
 # Canvas for Binary Tree Visualization
         self.binary_tree_canvas = tk.Canvas(self.main_frame, width = 1200, height = 700, bg = "blue", bd = 2, relief = tk.RIDGE)
-        self.binary_tree_canvas.pack(side = tk.LEFT, padx = (20,0), pady = 20)
+        self.binary_tree_canvas.pack(side = tk.LEFT, padx = (20, 0), pady = 20)
 
 # Control Buttons Frame
         self.button_frame = tk.Frame(self.main_frame, width = 720, height = 700, bd = 2, relief = tk.RIDGE)
@@ -37,7 +37,7 @@ class BinaryTreeApp:
 
 # Traversal Result Frame
         self.traversal_result_frame = tk.Frame(self.root, width = 1920, height = 380, bg = "lightgray", bd = 2, relief = tk.RIDGE)
-        self.traversal_result_frame.pack(side = tk.BOTTOM, fill = tk.X, padx = (20,20), pady = (0,20))
+        self.traversal_result_frame.pack(side = tk.BOTTOM, fill = tk.X, padx = (20, 20), pady = (0, 20))
         self.traversal_result_frame.pack_propagate(0)
 
         self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "Traversal Result: ", font = ("Segoe UI", 14), bg = "lightgray")
@@ -45,15 +45,15 @@ class BinaryTreeApp:
 
 # Control Buttons
     def control_buttons(self):
-        tk.Label(self.button_frame, text = "Number of Levels:", font = ("Segoe UI", 11)).pack(side = tk.TOP, pady = (5,5))
+        tk.Label(self.button_frame, text = "Number of Levels:", font = ("Segoe UI", 11)).pack(side = tk.TOP, pady = (5, 5))
         self.level_entry = tk.Entry(self.button_frame, width = 15, justify = "center")
         self.level_entry.insert(0, "1")
-        self.level_entry.pack(pady = (0,20))
+        self.level_entry.pack(pady = (0, 20))
 
         tk.Button(self.button_frame, text = "Draw Tree", bg = "green", fg = "white", width = 20, height = 2, command = self.draw_tree).pack(pady = 10)
 
         self.traversals_label = tk.Label(self.button_frame, text = "Traversals:", font = ("Segoe UI", 11))
-        self.traversals_label.pack(pady = (20,5))
+        self.traversals_label.pack(pady = (20, 5))
         tk.Button(self.button_frame, text = "Preorder", bg = "blue", fg = "white", width = 20, command = lambda: self.traversals("Preorder")).pack(pady = 5)
         tk.Button(self.button_frame, text = "Inorder", bg = "orange", fg = "white", width = 20, command = lambda: self.traversals("Inorder")).pack(pady = 5)
         tk.Button(self.button_frame, text = "Postorder", bg = "purple", fg = "white", width = 20, command = lambda: self.traversals("Postorder")).pack(pady = 5)
