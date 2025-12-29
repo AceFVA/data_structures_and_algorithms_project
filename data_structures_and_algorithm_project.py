@@ -66,6 +66,12 @@ class BinaryTreeApp:
 # Verify if the input is a valid positive integer
         try:
             levels = int(levels)
+            if levels > 5:
+                self.max_level_warning = tk.Label(self.button_frame, text = "Maximum level reached (5)\nPlease try again.", font = ("Segoe UI", 10), fg = "red")
+                self.max_level_warning.pack(pady = 5)
+                self.root.after(500, lambda: self.max_level_warning.config(text = ""))
+                return
+
             if levels < 1:
                 raise ValueError
             
@@ -90,6 +96,7 @@ class BinaryTreeApp:
                 level_node_positions.append((horizontal_position, vertical_position))
 
                 self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow")
+                self.binary_tree_canvas.create_text(horizontal_position, vertical_position, text = str(1 + node + (node_count - 1)), fill = "black")
 
             node_positions.append(level_node_positions)
 
