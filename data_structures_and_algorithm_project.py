@@ -13,6 +13,7 @@ class BinaryTreeApp:
         self.root = root
         self.root.title("Binary Tree")
         self.root.geometry("1920x1080")
+        self.node_user_input = []
 
         # Main Frame
         self.main_frame = tk.Frame(self.root)
@@ -34,7 +35,7 @@ class BinaryTreeApp:
         self.traversal_result_frame.pack(side = tk.BOTTOM, fill = tk.X, padx = (20, 20), pady = (0, 20))
         self.traversal_result_frame.pack_propagate(0)
 
-        self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "Traversal Result: ", font = ("Segoe UI", 14), bg = "lightgray")
+        self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "Traversal Result: ", font = ("Segoe UI", 14), bg = "lightgray", fg = "blue")
         self.traversal_result_label.pack(pady = 20)
 
     # Control Buttons
@@ -125,6 +126,21 @@ class BinaryTreeApp:
                     self.binary_tree_canvas.create_line(parent_x, parent_y, children_x, children_y, width = 1, tags = "line")
 
             self.binary_tree_canvas.tag_lower("line")
+        
+        self.create_node_user_input(node_positions)
+
+    def create_node_user_input(self, node_positions):
+        for inputs in self.node_user_input:
+            inputs.destroy()
+
+        self.node_user_input.clear()
+
+        for level_nodes in node_positions:
+            for node_x, node_y in level_nodes:
+                user_entry = tk.Entry(self.binary_tree_canvas, width = 4, justify = "center")
+                self.binary_tree_canvas.create_window(node_x, node_y, window = user_entry)
+                self.node_user_input.append(user_entry)
+
 
     # Identify traversal type and display result
     def traversals(self, mode):
