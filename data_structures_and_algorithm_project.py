@@ -46,6 +46,10 @@ class BinaryTreeApp:
 
         tk.Button(self.button_frame, text = "Draw Tree", bg = "green", fg = "white", width = 20, height = 2, command = self.draw_tree).pack(pady = 10)
 
+        self.warning_label = tk.Label(self.button_frame, text = "", font = ("Segoe UI", 9), fg = "red")
+        self.warning_label.pack(pady = 5)
+        self.warning_timer = None
+
         self.traversals_label = tk.Label(self.button_frame, text = "Traversals:", font = ("Segoe UI", 11))
         self.traversals_label.pack(pady = (20, 5))
         tk.Button(self.button_frame, text = "Preorder", bg = "blue", fg = "white", width = 20, command = lambda: self.traversals("Preorder")).pack(pady = 5)
@@ -58,20 +62,20 @@ class BinaryTreeApp:
         levels = self.level_entry.get()
 
         # Verify if the input is a valid positive integer
-        try:
-            levels = int(levels)
-            if levels > 5:
-                self.max_level_warning = tk.Label(self.button_frame, text = "Maximum level reached (5)\nPlease try again.", font = ("Segoe UI", 10), fg = "red")
-                self.max_level_warning.pack(pady = 5)
-                self.root.after(500, lambda: self.max_level_warning.config(text = ""))
+        self.warning_label.config(text = "")
+        
+        try: 
+            if int(levels) > 5:
+                self.warning_label.config(text = "Maximum level reached (5)\nPlease try again.")
+                self.warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
                 return
 
-            if levels < 1:
+            if int(levels) < 1:
                 raise ValueError
             
         except ValueError:
-            self.binary_tree_canvas.create_text(600, 350, text = "Please enter a valid positive integer for levels.", font = ("Segoe UI", 16), fill = "red")
-            return
+            self.warning_label.config(text = "Invalid input. Please enter a valid positive integer.")
+            self.warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
         
         # Parameters for making the binary tree
         canvas_width = 1200
