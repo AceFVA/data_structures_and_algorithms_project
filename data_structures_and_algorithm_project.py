@@ -63,7 +63,10 @@ class BinaryTreeApp:
 
         # Verify if the input is a valid positive integer
         self.warning_label.config(text = "")
-        
+        if self.warning_timer is not None:
+            self.root.after_cancel(self.warning_timer)
+            self.warning_timer = None
+
         try: 
             if int(levels) > 5:
                 self.warning_label.config(text = "Maximum level reached (5)\nPlease try again.")
@@ -74,7 +77,7 @@ class BinaryTreeApp:
                 raise ValueError
             
         except ValueError:
-            self.warning_label.config(text = "Invalid input. Please enter a valid positive integer.")
+            self.warning_label.config(text = "Invalid input.\nPlease enter a valid positive integer.")
             self.warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
         
         # Parameters for making the binary tree
