@@ -44,7 +44,8 @@ class BinaryTreeApp:
         self.level_entry.insert(0, "5")
         self.level_entry.pack(pady = (0, 20))
 
-        tk.Button(self.button_frame, text = "Draw Tree", bg = "green", fg = "white", width = 20, height = 2, command = self.draw_tree).pack(pady = 10)
+        self.draw_tree_button = tk.Button(self.button_frame, text = "Draw Tree", bg = "green", fg = "white", width = 20, height = 2, command = self.draw_tree)
+        self.draw_tree_button.pack(pady = 10)
 
         self.warning_label = tk.Label(self.button_frame, text = "", font = ("Segoe UI", 9), fg = "red")
         self.warning_label.pack(pady = 5)
@@ -52,9 +53,12 @@ class BinaryTreeApp:
 
         self.traversals_label = tk.Label(self.button_frame, text = "Traversals:", font = ("Segoe UI", 11))
         self.traversals_label.pack(pady = (20, 5))
-        self.preorder_traversal = tk.Button(self.button_frame, text = "Preorder", bg = "blue", fg = "white", width = 20, command = lambda: self.traversals("Preorder")).pack(pady = 5)
-        self.inorder_traversal = tk.Button(self.button_frame, text = "Inorder", bg = "orange", fg = "white", width = 20, command = lambda: self.traversals("Inorder")).pack(pady = 5)
-        self.post_order_traversal = tk.Button(self.button_frame, text = "Postorder", bg = "purple", fg = "white", width = 20, command = lambda: self.traversals("Postorder")).pack(pady = 5)
+        self.preorder_traversal = tk.Button(self.button_frame, text = "Preorder", bg = "blue", fg = "white", width = 20, command = lambda: self.traversals("Preorder"))
+        self.preorder_traversal.pack(pady = 5)
+        self.inorder_traversal = tk.Button(self.button_frame, text = "Inorder", bg = "orange", fg = "white", width = 20, command = lambda: self.traversals("Inorder"))
+        self.inorder_traversal.pack(pady = 5)
+        self.postorder_traversal = tk.Button(self.button_frame, text = "Postorder", bg = "purple", fg = "white", width = 20, command = lambda: self.traversals("Postorder"))
+        self.postorder_traversal.pack(pady = 5) 
 
     # Draws Binary Tree on Canvas based on user input
     def draw_tree(self):
@@ -100,9 +104,27 @@ class BinaryTreeApp:
 
                 # Drawing circle for node
                 self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow")
-                self.binary_tree_canvas.create_text(horizontal_position, vertical_position, text = str(1 + node + (node_count - 1)), fill = "black")
-
+            
+            # Store each node's position separated by its level
             node_positions.append(level_node_positions)
+
+        for level in range(len(node_positions) - 1): # Index: 0, 1, 2, 3 (except 4 since the nodes in this level doesn't have a child)
+            parent_node = node_positions[level] 
+            children_nodes = node_positions[level + 1]
+
+            for parent_index, (parent_x, parent_y) in enumerate(parent_node): # --> 0, (x-axis, y-axis)
+                left_child = 2 * parent_index
+                right_child = 2 * parent_index + 1
+
+                if left_child < len(children_nodes):
+                    children_x, children_y = children_nodes[left_child]
+                    self.binary_tree_canvas.create_line(parent_x, parent_y, children_x, children_y, width = 1, tags = "line")
+
+                if right_child < len(children_nodes):
+                    children_x, children_y = children_nodes[right_child]
+                    self.binary_tree_canvas.create_line(parent_x, parent_y, children_x, children_y, width = 1, tags = "line")
+
+            self.binary_tree_canvas.tag_lower("line")
 
     # Identify traversal type and display result
     def traversals(self, mode):
