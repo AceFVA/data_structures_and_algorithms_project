@@ -52,9 +52,9 @@ class BinaryTreeApp:
 
         self.traversals_label = tk.Label(self.button_frame, text = "Traversals:", font = ("Segoe UI", 11))
         self.traversals_label.pack(pady = (20, 5))
-        tk.Button(self.button_frame, text = "Preorder", bg = "blue", fg = "white", width = 20, command = lambda: self.traversals("Preorder")).pack(pady = 5)
-        tk.Button(self.button_frame, text = "Inorder", bg = "orange", fg = "white", width = 20, command = lambda: self.traversals("Inorder")).pack(pady = 5)
-        tk.Button(self.button_frame, text = "Postorder", bg = "purple", fg = "white", width = 20, command = lambda: self.traversals("Postorder")).pack(pady = 5)
+        self.preorder_traversal = tk.Button(self.button_frame, text = "Preorder", bg = "blue", fg = "white", width = 20, command = lambda: self.traversals("Preorder")).pack(pady = 5)
+        self.inorder_traversal = tk.Button(self.button_frame, text = "Inorder", bg = "orange", fg = "white", width = 20, command = lambda: self.traversals("Inorder")).pack(pady = 5)
+        self.post_order_traversal = tk.Button(self.button_frame, text = "Postorder", bg = "purple", fg = "white", width = 20, command = lambda: self.traversals("Postorder")).pack(pady = 5)
 
     # Draws Binary Tree on Canvas based on user input
     def draw_tree(self):
@@ -88,7 +88,7 @@ class BinaryTreeApp:
         node_positions = [] # To store positions of nodes for drawing connections
 
         # Draw nodes level by level
-        for level in range(levels):
+        for level in range(int(levels)):
             node_count = 2 ** level
             vertical_position = (level + 1) * vertical_spacing
             level_node_positions = []
