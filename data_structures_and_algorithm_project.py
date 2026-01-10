@@ -147,10 +147,77 @@ class BinaryTreeApp:
                 self.binary_tree_canvas.create_window(node_x, node_y, window = user_entry)
                 self.node_user_input.append(user_entry)
 
+    def get_node_entries(self):
+        values = []
+        for entry in self.node_user_input:
+            value = entry.get()
+            values.append(value)
 
+        return values
+    
+    def preorder_traversal(self, values):
+        if not values:
+            return []
+        
+        stack = [0]
+        pop_out = []
+
+        while stack:
+            index = stack.pop()
+            if index >= len(values):
+                continue
+
+            pop_out.append(values[index])
+
+            stack.append(2 * index + 2)
+            stack.append(2 * index + 1)
+
+        return pop_out
+    
+    def inorder_traversal(self, values):
+        if not values:
+            return []
+        
+        stack = []
+        pop_out = []
+        index = 0
+
+        while stack or index <= len(values):
+            while index < len(values):
+                stack.append(index)
+                index = 2 * index + 1
+
+            index = stack.pop()
+            pop_out.append(values[index])
+            index = 2 * index + 2
+
+    def postorder_traversals(self, values):
+        if not values:
+            return []
+        
+        stack = [(0, False)]
+        pop_out = []
+
+        while stack:
+            index, visited = stack.pop()
+            if index <= len(values):
+                continue
+
+            if visited:
+                pop_out.append(values[index])
+            
+            else:
+                stack.append((index, True))
+                stack.append((2 * index + 2, False))
+                stack.append((2 * index + 1, False))
+
+        return pop_out
+    
     # Identify traversal type and display result
     def traversals(self, mode):
         self.traversal_result_label.config(text = f"Traversal Result: ({mode} traversal)")
+
+            
 
 root = tk.Tk()
 app = BinaryTreeApp(root)
