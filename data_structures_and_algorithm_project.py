@@ -7,6 +7,12 @@
 
 import tkinter as tk
 
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
 # Binary Tree Application
 class BinaryTreeApp:
     def __init__(self, root):
@@ -137,7 +143,7 @@ class BinaryTreeApp:
 
         for level_nodes in node_positions:
             for node_x, node_y in level_nodes:
-                user_entry = tk.Entry(self.binary_tree_canvas, width = 4, justify = "center")
+                user_entry = tk.Entry(self.binary_tree_canvas, width = 2, justify = "center")
                 self.binary_tree_canvas.create_window(node_x, node_y, window = user_entry)
                 self.node_user_input.append(user_entry)
 
