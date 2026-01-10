@@ -23,26 +23,26 @@ class BinaryTreeApp:
 
         # Main Frame
         self.main_frame = tk.Frame(self.root)
-        self.main_frame.pack(side = tk.TOP, fill = tk.Y, expand = True, padx = (20, 20), pady = (20, 200))
+        self.main_frame.pack(side = tk.TOP, fill = tk.Y, expand = True, padx = (20, 20))
 
         # Canvas for Binary Tree Visualization
-        self.binary_tree_canvas = tk.Canvas(self.main_frame, width = 1200, height = 700, bg = "white", bd = 2, relief = tk.RIDGE)
-        self.binary_tree_canvas.pack(side = tk.LEFT, padx = (20, 0), pady = 20)
+        self.binary_tree_canvas = tk.Canvas(self.main_frame, width = 1200, height = 650, bg = "white", bd = 2, relief = tk.RIDGE)
+        self.binary_tree_canvas.pack(side = tk.LEFT, padx = (20, 0))
 
         # Control Buttons Frame
-        self.button_frame = tk.Frame(self.main_frame, width = 720, height = 700, bd = 2, relief = tk.RIDGE)
-        self.button_frame.pack(side = tk.RIGHT, padx = (0, 20), pady = 20)
+        self.button_frame = tk.Frame(self.main_frame, width = 720, height = 650, bd = 2, relief = tk.RIDGE)
+        self.button_frame.pack(side = tk.RIGHT, padx = (0, 20))
         self.button_frame.pack_propagate(0)
 
         self.control_buttons()
 
         # Traversal Result Frame
-        self.traversal_result_frame = tk.Frame(self.root, width = 1920, height = 380, bg = "lightgray", bd = 2, relief = tk.RIDGE)
-        self.traversal_result_frame.pack(side = tk.BOTTOM, fill = tk.X, padx = (20, 20), pady = (0, 20))
+        self.traversal_result_frame = tk.Frame(self.root, width = 1920, height = 200, bg = "lightgray", bd = 2, relief = tk.RIDGE)
+        self.traversal_result_frame.pack(side = tk.BOTTOM, padx = (40, 40), pady = (0, 50))
         self.traversal_result_frame.pack_propagate(0)
 
         self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "Traversal Result: ", font = ("Segoe UI", 14), bg = "lightgray", fg = "blue")
-        self.traversal_result_label.pack(pady = 20)
+        self.traversal_result_label.pack(pady = 10)
 
     # Control Buttons
     def control_buttons(self):
@@ -90,6 +90,7 @@ class BinaryTreeApp:
         except ValueError:
             self.warning_label.config(text = "Invalid input.\nPlease enter a valid positive integer.")
             self.warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
+            return
         
         # Parameters for making the binary tree
         canvas_width = 1200
@@ -155,7 +156,7 @@ class BinaryTreeApp:
 
         return values
     
-    def preorder_traversal(self, values):
+    def preorder(self, values):
         if not values:
             return []
         
@@ -174,7 +175,7 @@ class BinaryTreeApp:
 
         return pop_out
     
-    def inorder_traversal(self, values):
+    def inorder(self, values):
         if not values:
             return []
         
@@ -182,7 +183,7 @@ class BinaryTreeApp:
         pop_out = []
         index = 0
 
-        while stack or index <= len(values):
+        while stack or index < len(values):
             while index < len(values):
                 stack.append(index)
                 index = 2 * index + 1
@@ -190,8 +191,10 @@ class BinaryTreeApp:
             index = stack.pop()
             pop_out.append(values[index])
             index = 2 * index + 2
+        
+        return pop_out
 
-    def postorder_traversals(self, values):
+    def postorder(self, values):
         if not values:
             return []
         
@@ -200,7 +203,7 @@ class BinaryTreeApp:
 
         while stack:
             index, visited = stack.pop()
-            if index <= len(values):
+            if index >= len(values):
                 continue
 
             if visited:
@@ -215,9 +218,30 @@ class BinaryTreeApp:
     
     # Identify traversal type and display result
     def traversals(self, mode):
-        self.traversal_result_label.config(text = f"Traversal Result: ({mode} traversal)")
+        if not self.node_user_input:
+            self.traversal_result_label.config(text = "Traversal Result: None. Draw the Binary Tree first.", fg = "red")
+            return
+        
+        values = self.get_node_entries()
 
-            
+        if mode == "Preorder":
+            result = self.preorder(values)
+
+        elif mode == "Inorder":
+            result = self.inorder(values)
+
+        elif mode == "Postorder":
+            result = self.postorder(values)
+
+        shown_value = []
+
+        for value in result:
+            if value == "":
+                shown_value.append("_")
+            else:
+                shown_value.append(value)
+
+        self.traversal_result_label.config(text = f"Traversal Result ({mode}):\n" + " | ".join(shown_value), fg = "blue")
 
 root = tk.Tk()
 app = BinaryTreeApp(root)
