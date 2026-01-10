@@ -136,6 +136,7 @@ class BinaryTreeApp:
         
         self.create_node_user_input(node_positions)
 
+    # This will make a text box where users can enter their input on each node
     def create_node_user_input(self, node_positions):
         for inputs in self.node_user_input:
             inputs.destroy()
@@ -148,6 +149,7 @@ class BinaryTreeApp:
                 self.binary_tree_canvas.create_window(node_x, node_y, window = user_entry)
                 self.node_user_input.append(user_entry)
 
+    # Gets the inputs in each node
     def get_node_entries(self):
         values = []
         for entry in self.node_user_input:
@@ -156,6 +158,7 @@ class BinaryTreeApp:
 
         return values
     
+    # Preorder Traversal
     def preorder(self, values):
         if not values:
             return []
@@ -175,6 +178,7 @@ class BinaryTreeApp:
 
         return pop_out
     
+    # Inorder Traversal
     def inorder(self, values):
         if not values:
             return []
@@ -194,6 +198,7 @@ class BinaryTreeApp:
         
         return pop_out
 
+    # Postorder Traversal
     def postorder(self, values):
         if not values:
             return []
