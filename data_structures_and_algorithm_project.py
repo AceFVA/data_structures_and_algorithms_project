@@ -20,6 +20,8 @@ class BinaryTreeApp:
         self.traversal_warning_timer = None
         self.current_color = ""
         self.current_method = ""
+        self.current_values = []
+        self.show_value = []
 
         # Main Frame
         self.main_frame = tk.Frame(self.root)
@@ -41,8 +43,14 @@ class BinaryTreeApp:
         self.traversal_result_frame.pack(side = tk.BOTTOM, padx = (40, 40), pady = (0, 50))
         self.traversal_result_frame.pack_propagate(0)
 
-        self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "Traversal Result: ", font = ("Segoe UI", 14), bg = "lightgray", fg = "blue")
+        self.traversal_title_label = tk.Label(self.traversal_result_frame, text = "Traversal Result:", font = ("Segoe UI", 14), bg = "lightgray", fg = "green")
+        self.traversal_title_label.pack(pady = 5)
+
+        self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 28), bg = "lightgray")
         self.traversal_result_label.pack(pady = 5)
+
+        self.traversal_method_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 9), bg = "lightgray")
+        self.traversal_method_label.pack(pady = 5)
 
     # Control Buttons
     def control_buttons(self):
@@ -244,10 +252,17 @@ class BinaryTreeApp:
             return
         
         result_index = order[step]
+        get_value = self.current_values[result_index]
+
+        if get_value == "":
+            self.show_value.append("_")
+
+        else:
+            self.show_value.append(get_value)
 
         self.binary_tree_canvas.itemconfig(self.node_circles[result_index], fill = self.current_color)
         self.node_highlighter = self.root.after(delay, lambda: self.node_animation(order, step + 1, delay))
-
+        self.traversal_result_label.config(text = " ".join(self.show_value), fg = self.current_color)
 
     # Identify traversal type and display result
     def traversals(self, method):
@@ -256,11 +271,13 @@ class BinaryTreeApp:
             self.traversal_warning_timer = None
 
         if not self.node_user_input:
-            self.traversal_result_label.config(text = "Traversal Result:\nDraw the Binary Tree first.", fg = "red")
-            self.traversal_warning_timer = self.root.after(1000, lambda: self.traversal_result_label.config(text = "Traversal Result: ", fg = "blue"))
+            self.traversal_title_label.config(text = "Traversal Result:\nDraw the Binary Tree first.", fg = "red")
+            self.traversal_warning_timer = self.root.after(1000, lambda: self.traversal_title_label.config(text = "Traversal Result: ", fg = "green"))
             return
         
         values = self.get_node_entries()
+        self.current_values = values
+        self.show_value.clear()
 
         if method == "Preorder":
             result = self.preorder(values)
@@ -281,26 +298,13 @@ class BinaryTreeApp:
         for circle in self.node_circles:
             self.binary_tree_canvas.itemconfig(circle, fill = "yellow")
 
-        show_value = []
-
-        for index in result:
-            node_value = values[index]
-
-            if node_value == "":
-                show_value.append("_")
-
-            elif node_value == None:
-                continue
-
-            else:
-                show_value.append(node_value)
-
         self.current_color = font_color
         self.current_method = method
-        self.node_animation(result)
 
-        self.traversal_result = tk.Label(self.traversal_result_frame, bg = "lightgray", text = f"{method}", font = ("Segoe", 10), fg = f"{font_color}")
-        self.traversal_result.pack(pady = 5)
+        self.traversal_result_label.config(text = "", fg = self.current_color)
+        self.traversal_method_label.config(text = self.current_method, fg = self.current_color)
+
+        self.node_animation(result)
 
 root = tk.Tk()
 app = BinaryTreeApp(root)
