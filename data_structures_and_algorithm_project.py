@@ -14,6 +14,8 @@ class BinaryTreeApp:
         self.root.title("Binary Tree")
         self.root.geometry("1920x1080")
         self.node_user_input = []
+        self.node_circles = []
+        self.node_highlighter = None
 
         # Main Frame
         self.main_frame = tk.Frame(self.root)
@@ -64,6 +66,7 @@ class BinaryTreeApp:
     # Draws Binary Tree on Canvas based on user input
     def draw_tree(self):
         self.binary_tree_canvas.delete("all")
+        self.node_circles.clear()
         levels = self.level_entry.get()
 
         # Verify if the input is a valid positive integer
@@ -105,8 +108,9 @@ class BinaryTreeApp:
                 level_node_positions.append((horizontal_position, vertical_position))
 
                 # Drawing circle for node
-                self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow")
-            
+                node_circle = self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow")
+                self.node_circles.append(node_circle)
+
             # Store each node's position separated by its level
             node_positions.append(level_node_positions)
 
@@ -174,7 +178,7 @@ class BinaryTreeApp:
                 continue
 
             else:
-                pop_out.append(values[index])
+                pop_out.append(index)
 
                 stack.append(2 * index + 2)
                 stack.append(2 * index + 1)
@@ -199,7 +203,7 @@ class BinaryTreeApp:
                 break
 
             index = stack.pop()
-            pop_out.append(values[index])
+            pop_out.append(index)
             index = 2 * index + 2
         
         return pop_out
@@ -221,7 +225,7 @@ class BinaryTreeApp:
                 continue
 
             if visited:
-                pop_out.append(values[index])
+                pop_out.append(index)
             
             else:
                 stack.append((index, True))
@@ -230,6 +234,17 @@ class BinaryTreeApp:
 
         return pop_out
     
+    def node_animation(self, order, step = 0, delay = 500):
+        if step >= len(order):
+            self.node_highlighter = None
+            return
+        
+        result_index = order[step]
+
+        self.binary_tree_canvas.itemconfig(self.node_circles[result_index], fill = "blue")
+        self.node_highlighter = self.root.after(delay, lambda: self.node_animation(order, step + 1, delay))
+
+
     # Identify traversal type and display result
     def traversals(self, mode):
         if not self.node_user_input:
@@ -247,17 +262,28 @@ class BinaryTreeApp:
         elif mode == "Postorder":
             result = self.postorder(values)
 
+        if self.node_highlighter is not None:
+            self.root.after_cancel(self.node_highlighter)
+            self.node_highlighter = None
+
+        for circle in self.node_circles:
+            self.binary_tree_canvas.itemconfig(circle, fill = "yellow")
+
+        self.node_animation(result)
+
         show_value = []
 
-        for final_value in result:
-            if final_value == "":
+        for index in result:
+            node_value = values[index]
+
+            if node_value == "":
                 show_value.append("_")
 
-            elif final_value == None:
+            elif node_value == None:
                 continue
 
             else:
-                show_value.append(final_value)
+                show_value.append(node_value)
 
         self.traversal_result_label.config(text = f"Traversal Result ({mode}):\n" + " | ".join(show_value), fg = "blue")
 
