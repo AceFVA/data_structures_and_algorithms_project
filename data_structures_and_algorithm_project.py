@@ -7,12 +7,6 @@
 
 import tkinter as tk
 
-class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = None
-        self.right = None
-
 # Binary Tree Application
 class BinaryTreeApp:
     def __init__(self, root):
