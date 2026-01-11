@@ -176,7 +176,7 @@ class BinaryTreeApp:
             if index >= len(values):
                 continue
 
-            if values[index] is not None:
+            if values[index] is None:
                 continue
 
             else:
@@ -247,15 +247,19 @@ class BinaryTreeApp:
         elif mode == "Postorder":
             result = self.postorder(values)
 
-        shown_value = []
+        show_value = []
 
-        for value in result:
-            if value == "":
-                shown_value.append("_")
+        for final_value in result:
+            if final_value == "":
+                show_value.append("_")
+
+            elif final_value == None:
+                continue
+
             else:
-                shown_value.append(value)
+                show_value.append(final_value)
 
-        self.traversal_result_label.config(text = f"Traversal Result ({mode}):\n" + " | ".join(shown_value), fg = "blue")
+        self.traversal_result_label.config(text = f"Traversal Result ({mode}):\n" + " | ".join(show_value), fg = "blue")
 
 root = tk.Tk()
 app = BinaryTreeApp(root)
