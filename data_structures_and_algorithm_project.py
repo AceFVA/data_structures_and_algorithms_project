@@ -201,6 +201,9 @@ class BinaryTreeApp:
                 stack.append(index)
                 index = 2 * index + 1
 
+            if not stack:
+                break
+
             index = stack.pop()
             pop_out.append(values[index])
             index = 2 * index + 2
