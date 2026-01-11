@@ -153,8 +153,13 @@ class BinaryTreeApp:
     def get_node_entries(self):
         values = []
         for entry in self.node_user_input:
-            value = entry.get()
-            values.append(value)
+            value = entry.get().strip()
+
+            if value != "?":
+                values.append(value)
+
+            else:
+                values.append(None)
 
         return values
     
@@ -171,10 +176,14 @@ class BinaryTreeApp:
             if index >= len(values):
                 continue
 
-            pop_out.append(values[index])
+            if values[index] is not None:
+                continue
 
-            stack.append(2 * index + 2)
-            stack.append(2 * index + 1)
+            else:
+                pop_out.append(values[index])
+
+                stack.append(2 * index + 2)
+                stack.append(2 * index + 1)
 
         return pop_out
     
