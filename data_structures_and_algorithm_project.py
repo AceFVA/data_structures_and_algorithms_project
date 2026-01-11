@@ -247,20 +247,28 @@ class BinaryTreeApp:
 
     # Identify traversal type and display result
     def traversals(self, mode):
+        if self.warning_timer is not None:
+            self.root.after_cancel(self.warning_timer)
+            self.warning_timer = None
+
         if not self.node_user_input:
-            self.traversal_result_label.config(text = "Traversal Result: None. Draw the Binary Tree first.", fg = "red")
+            self.traversal_result_label.config(text = "Traversal Result:\nDraw the Binary Tree first.", fg = "red")
+            self.warning_timer = self.root.after(3000, lambda: self.traversal_result_label.config(text = "Traversal Result:", fg = "blue"))
             return
         
         values = self.get_node_entries()
 
         if mode == "Preorder":
             result = self.preorder(values)
+            font_color = "blue"
 
         elif mode == "Inorder":
             result = self.inorder(values)
+            font_color = "orange"
 
         elif mode == "Postorder":
             result = self.postorder(values)
+            font_color = "purple"
 
         if self.node_highlighter is not None:
             self.root.after_cancel(self.node_highlighter)
@@ -285,7 +293,8 @@ class BinaryTreeApp:
             else:
                 show_value.append(node_value)
 
-        self.traversal_result_label.config(text = f"Traversal Result ({mode}):\n" + " | ".join(show_value), fg = "blue")
+        self.traversal_result = tk.Label(self.traversal_result_frame, bg = "lightgray", text = f"{mode}", font = ("Segoe", 10), fg = f"{font_color}")
+        self.traversal_result.pack(pady = 10)
 
 root = tk.Tk()
 app = BinaryTreeApp(root)
