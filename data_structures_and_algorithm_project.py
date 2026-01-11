@@ -223,6 +223,9 @@ class BinaryTreeApp:
             if index >= len(values):
                 continue
 
+            if values[index] is None:
+                continue
+
             if visited:
                 pop_out.append(values[index])
             
