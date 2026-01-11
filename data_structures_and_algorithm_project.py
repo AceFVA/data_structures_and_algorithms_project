@@ -79,7 +79,19 @@ class BinaryTreeApp:
     def draw_tree(self):
         self.binary_tree_canvas.delete("all")
         self.node_circles.clear()
+        self.show_value.clear()
+        self.traversal_result_label.config(text = "")
+        self.traversal_method_label.config(text = "")
         levels = self.level_entry.get()
+
+        # Reset timers
+        if self.node_highlighter is not None:
+            self.root.after_cancel(self.node_highlighter)
+            self.node_highlighter = None
+
+        if self.traversal_warning_timer is not None:
+            self.root.after_cancel(self.traversal_warning_timer)
+            self.traversal_warning_timer = None
 
         # Verify if the input is a valid positive integer
         self.warning_label.config(text = "")
@@ -87,6 +99,8 @@ class BinaryTreeApp:
             self.root.after_cancel(self.tree_warning_timer)
             self.tree_warning_timer = None
 
+        self.traversal_title_label.config(text = "Traversal Result:", fg = "green")
+        
         try: 
             if int(levels) > 5:
                 self.warning_label.config(text = "Maximum level reached (5)\nPlease try again.")
@@ -254,7 +268,11 @@ class BinaryTreeApp:
         result_index = order[step]
         get_value = self.current_values[result_index]
 
-        if get_value == "":
+        if get_value is None:
+            self.node_highlighter = self.root.after(delay, lambda: self.node_animation(order, step + 1, delay))
+            return
+
+        elif get_value == "":
             self.show_value.append("_")
 
         else:
@@ -273,6 +291,8 @@ class BinaryTreeApp:
         if not self.node_user_input:
             self.traversal_title_label.config(text = "Traversal Result:\nDraw the Binary Tree first.", fg = "red")
             self.traversal_warning_timer = self.root.after(1000, lambda: self.traversal_title_label.config(text = "Traversal Result: ", fg = "green"))
+            self.traversal_result_label.config(text = "")
+            self.traversal_method_label.config(text = "")
             return
         
         values = self.get_node_entries()
