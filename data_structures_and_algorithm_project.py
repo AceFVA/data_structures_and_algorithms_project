@@ -197,7 +197,7 @@ class BinaryTreeApp:
         index = 0
 
         while stack or index < len(values):
-            while index < len(values):
+            while index < len(values) and values[index] is not None:
                 stack.append(index)
                 index = 2 * index + 1
 
