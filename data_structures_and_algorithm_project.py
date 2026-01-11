@@ -16,6 +16,8 @@ class BinaryTreeApp:
         self.node_user_input = []
         self.node_circles = []
         self.node_highlighter = None
+        self.tree_warning_timer = None
+        self.traversal_warning_timer = None
 
         # Main Frame
         self.main_frame = tk.Frame(self.root)
@@ -38,7 +40,7 @@ class BinaryTreeApp:
         self.traversal_result_frame.pack_propagate(0)
 
         self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "Traversal Result: ", font = ("Segoe UI", 14), bg = "lightgray", fg = "blue")
-        self.traversal_result_label.pack(pady = 10)
+        self.traversal_result_label.pack(pady = 5)
 
     # Control Buttons
     def control_buttons(self):
@@ -71,14 +73,14 @@ class BinaryTreeApp:
 
         # Verify if the input is a valid positive integer
         self.warning_label.config(text = "")
-        if self.warning_timer is not None:
-            self.root.after_cancel(self.warning_timer)
-            self.warning_timer = None
+        if self.tree_warning_timer is not None:
+            self.root.after_cancel(self.tree_warning_timer)
+            self.tree_warning_timer = None
 
         try: 
             if int(levels) > 5:
                 self.warning_label.config(text = "Maximum level reached (5)\nPlease try again.")
-                self.warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
+                self.tree_warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
                 return
 
             if int(levels) < 1:
@@ -86,7 +88,7 @@ class BinaryTreeApp:
             
         except ValueError:
             self.warning_label.config(text = "Invalid input.\nPlease enter a valid positive integer.")
-            self.warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
+            self.tree_warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
             return
         
         # Parameters for making the binary tree
@@ -247,13 +249,13 @@ class BinaryTreeApp:
 
     # Identify traversal type and display result
     def traversals(self, mode):
-        if self.warning_timer is not None:
-            self.root.after_cancel(self.warning_timer)
-            self.warning_timer = None
+        if self.traversal_warning_timer is not None:
+            self.root.after_cancel(self.traversal_warning_timer)
+            self.traversal_warning_timer = None
 
         if not self.node_user_input:
             self.traversal_result_label.config(text = "Traversal Result:\nDraw the Binary Tree first.", fg = "red")
-            self.warning_timer = self.root.after(3000, lambda: self.traversal_result_label.config(text = "Traversal Result:", fg = "blue"))
+            self.travesal_warning_timer = self.root.after(1000, lambda: self.traversal_result_label.config(text = "Traversal Result: ", fg = "blue"))
             return
         
         values = self.get_node_entries()
@@ -294,7 +296,7 @@ class BinaryTreeApp:
                 show_value.append(node_value)
 
         self.traversal_result = tk.Label(self.traversal_result_frame, bg = "lightgray", text = f"{mode}", font = ("Segoe", 10), fg = f"{font_color}")
-        self.traversal_result.pack(pady = 10)
+        self.traversal_result.pack(pady = 5)
 
 root = tk.Tk()
 app = BinaryTreeApp(root)
