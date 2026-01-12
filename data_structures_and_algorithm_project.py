@@ -208,11 +208,11 @@ class BinaryTreeApp:
                 left = 2 * index + 1 # left child
                 right = 2 * index + 2 # right child
 
-            if left < len(values):
-                values[left] = None
+                if left < len(values):
+                    values[left] = None
 
-            if right < len(values):
-                values[right] = None
+                if right < len(values):
+                    values[right] = None
 
         for index, value in enumerate(values):
             self.binary_tree_canvas.itemconfig(self.node_circles[index])
@@ -298,6 +298,7 @@ class BinaryTreeApp:
 
         return pop_out
     
+    # creates an animation when traversing
     def node_animation(self, order, step = 0, delay = 500):
         if step >= len(order):
             self.node_highlighter = None
@@ -334,8 +335,11 @@ class BinaryTreeApp:
             return
         
         values = self.get_node_entries()
+
         if values is None:
             return
+        
+        values = self.off_nodes(values)
 
         self.current_values = values
         self.show_value.clear()
@@ -355,9 +359,6 @@ class BinaryTreeApp:
         if self.node_highlighter is not None:
             self.root.after_cancel(self.node_highlighter)
             self.node_highlighter = None
-
-        for circle in self.node_circles:
-            self.binary_tree_canvas.itemconfig(circle, fill = "yellow")
 
         self.current_color = font_color
         self.current_method = method
