@@ -201,13 +201,30 @@ class BinaryTreeApp:
 
         return values
     
+    # This will gray out the nodes under a node with a "?" entried by the user
     def off_nodes(self, values):
         for index in range(len(values)):
             if values[index] is None:
                 left = 2 * index + 1 # left child
                 right = 2 * index + 2 # right child
 
+            if left < len(values):
+                values[left] = None
 
+            if right < len(values):
+                values[right] = None
+
+        for index, value in enumerate(values):
+            self.binary_tree_canvas.itemconfig(self.node_circles[index])
+
+            if value is None:
+                self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "lightgray")
+
+            else: 
+                self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "yellow")
+
+        return values
+    
     # Preorder Traversal
     def preorder(self, values):
         if not values:
