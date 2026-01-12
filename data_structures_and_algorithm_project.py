@@ -201,6 +201,13 @@ class BinaryTreeApp:
 
         return values
     
+    def off_nodes(self, values):
+        for index in range(len(values)):
+            if values[index] is None:
+                left = 2 * index + 1 # left child
+                right = 2 * index + 2 # right child
+
+
     # Preorder Traversal
     def preorder(self, values):
         if not values:
