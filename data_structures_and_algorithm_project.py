@@ -39,23 +39,23 @@ class BinaryTreeApp:
         self.control_buttons()
 
         # Traversal Result Frame
-        self.traversal_result_frame = tk.Frame(self.root, width = 1920, height = 200, bg = "lightyellow", borderwidth = 3,  relief = tk.RIDGE)
+        self.traversal_result_frame = tk.Frame(self.root, width = 1920, height = 200, bg = "lightgray", borderwidth = 3,  relief = tk.RIDGE)
         self.traversal_result_frame.pack(side = tk.BOTTOM, padx = (40, 40), pady = (0, 50))
         self.traversal_result_frame.pack_propagate(0)
 
-        self.traversal_title_label = tk.Label(self.traversal_result_frame, text = "Traversal Result:", font = ("Segoe UI", 14), bg = "lightyellow", fg = "green")
+        self.traversal_title_label = tk.Label(self.traversal_result_frame, text = "Traversal Result:", font = ("Segoe UI", 14), bg = "lightgray")
         self.traversal_title_label.pack(pady = 5)
 
-        self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 28), bg = "lightyellow")
+        self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 28), bg = "lightgray")
         self.traversal_result_label.pack(pady = 5)
 
-        self.traversal_method_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 9), bg = "lightyellow")
+        self.traversal_method_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 9), bg = "lightgray")
         self.traversal_method_label.pack(pady = 5)
 
     # Control Buttons
     def control_buttons(self):
         tk.Label(self.button_frame, text = "Number of Levels:", font = ("Segoe UI", 11)).pack(side = tk.TOP, pady = (20, 5))
-        self.level_entry = tk.Entry(self.button_frame, bg = "lightyellow", width = 15, justify = "center")
+        self.level_entry = tk.Entry(self.button_frame, bg = "lightgray", width = 15, justify = "center", borderwidth = 1, relief = tk.SOLID)
         self.level_entry.insert(0, "5")
         self.level_entry.pack(pady = (0, 10))
 
@@ -77,7 +77,7 @@ class BinaryTreeApp:
 
         self.node_detail_title_label = tk.Label(self.button_frame, text = "Selected Node:", font = ("Segoe", 11))
         self.node_detail_title_label.pack(pady = (20, 5))
-        self.node_detail_label = tk.Label(self.button_frame, bg = "lightyellow", width = 20, height = 15, borderwidth = 1)
+        self.node_detail_label = tk.Label(self.button_frame, bg = "lightgray", width = 20, height = 15, borderwidth = 1, relief = tk.SOLID)
         self.node_detail_label.pack(pady  = (5, 10))
 
     # Draws Binary Tree on Canvas based on user input
@@ -104,7 +104,7 @@ class BinaryTreeApp:
             self.root.after_cancel(self.tree_warning_timer)
             self.tree_warning_timer = None
 
-        self.traversal_title_label.config(text = "Traversal Result:", fg = "green")
+        self.traversal_title_label.config(text = "Traversal Result:", fg = "black")
         
         try: 
             if int(levels) > 5:
@@ -141,8 +141,6 @@ class BinaryTreeApp:
                 # Drawing circle for node
                 node_circle = self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow")
                 self.node_circles.append(node_circle)
-
-                
 
             # Store each node's position separated by its level
             node_positions.append(level_node_positions)
@@ -185,6 +183,15 @@ class BinaryTreeApp:
         values = []
         for entry in self.node_user_input:
             value = entry.get().strip()
+
+            try:
+                if value == "":
+                    raise ValueError
+                
+            except ValueError:
+                self.warning_label.config(text = "Missing node value.\nPlease input any value first\nor '?' if its an empty node.")
+                self.tree_warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
+                return
 
             if value != "?":
                 values.append(value)
@@ -296,13 +303,16 @@ class BinaryTreeApp:
             self.traversal_warning_timer = None
 
         if not self.node_user_input:
-            self.traversal_title_label.config(text = "Traversal Result:\nDraw the Binary Tree first.", fg = "red")
-            self.traversal_warning_timer = self.root.after(1000, lambda: self.traversal_title_label.config(text = "Traversal Result: ", fg = "green"))
+            self.traversal_title_label.config(text = "Traversal Result:\n\nDraw the Binary Tree first.", fg = "red")
+            self.traversal_warning_timer = self.root.after(1000, lambda: self.traversal_title_label.config(text = "Traversal Result: ", fg = "black"))
             self.traversal_result_label.config(text = "")
             self.traversal_method_label.config(text = "")
             return
         
         values = self.get_node_entries()
+        if values is None:
+            return
+
         self.current_values = values
         self.show_value.clear()
 
