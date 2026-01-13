@@ -59,7 +59,7 @@ class BinaryTreeApp:
         self.level_entry.pack(pady = (0, 10))
 
         self.draw_tree_button = tk.Button(self.button_frame, text = "Draw Tree", bg = "green", fg = "white", width = 20, height = 2, command = self.draw_tree)
-        self.draw_tree_button.pack(pady = 5)
+        self.draw_tree_button.pack(padx = (5, 5),pady = 5)
 
         self.warning_label = tk.Label(self.button_frame, text = "", font = ("Segoe UI", 9), fg = "red")
         self.warning_label.pack(pady = 5)
@@ -76,7 +76,7 @@ class BinaryTreeApp:
 
         self.node_detail_title_label = tk.Label(self.button_frame, text = "Selected Node:", font = ("Segoe", 11))
         self.node_detail_title_label.pack(pady = (20, 5))
-        self.node_detail_label = tk.Label(self.button_frame, bg = "lightgray", fg = "red", width = 20, height = 15, borderwidth = 1, font = ("Segoe", 9), relief = tk.SOLID)
+        self.node_detail_label = tk.Label(self.button_frame, fg = "red", width = 20, height = 15, borderwidth = 1, font = ("Segoe", 12), relief = tk.SOLID)
         self.node_detail_label.pack(pady  = (5, 10))
 
     # Draws Binary Tree on Canvas based on user input
@@ -185,9 +185,12 @@ class BinaryTreeApp:
 
         if value is None:
             text_detail = f"Node Index: {index + 1}\n\nEmpty"
+        
+        elif index == 0:
+            text_detail = f"Node Index: Root\nNode Value: {value}\n\n      Connections     \n\nParent: None\nLeft Child: {self.current_values[2 * index + 1]}\nRight Child: {self.current_values[2 * index + 2]}"
 
         else:
-            text_detail = (f"Node Index: {index + 1}\n\nValue: {value}\n\nLeft Child: {self.current_values[2 * index + 1]}\n\nRight Child: {self.current_values[2 * index + 2]}")
+            text_detail = (f"Node Index: {index + 1}\nNode Value: {value}\n\n      Connections     \n\nParent: {self.current_values[(index - 1) // 2]}\nLeft Child: {self.current_values[2 * index + 1]}\nRight Child: {self.current_values[2 * index + 2]}")
 
         self.node_detail_label.config(text = text_detail)
 
