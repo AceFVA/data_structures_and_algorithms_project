@@ -76,7 +76,7 @@ class BinaryTreeApp:
 
         self.node_detail_title_label = tk.Label(self.button_frame, text = "Selected Node:", font = ("Segoe", 11))
         self.node_detail_title_label.pack(pady = (20, 5))
-        self.node_detail_label = tk.Label(self.button_frame, bg = "lightgray", width = 20, height = 15, borderwidth = 1, relief = tk.SOLID)
+        self.node_detail_label = tk.Label(self.button_frame, bg = "lightgray", fg = "red", width = 20, height = 15, borderwidth = 1, font = ("Segoe", 9), relief = tk.SOLID)
         self.node_detail_label.pack(pady  = (5, 10))
 
     # Draws Binary Tree on Canvas based on user input
@@ -131,8 +131,10 @@ class BinaryTreeApp:
                 level_node_positions.append((horizontal_position, vertical_position))
 
                 # Drawing circle for node
-                node_circle = self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow")
+                node_circle = self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow", tags = ("node",))
                 self.node_circles.append(node_circle)
+
+                self.binary_tree_canvas.tag_bind(node_circle, "<Button-1>", lambda event, index = len(self.node_circles) - 1: self.show_node_details(index))
 
             # Store each node's position separated by its level
             node_positions.append(level_node_positions)
@@ -174,6 +176,20 @@ class BinaryTreeApp:
         self.warning_label.config(text = "")
 
         self.draw_tree_button.config(text = "Draw Tree", command = self.draw_tree)
+
+    def show_node_details(self, index):
+        if not self.current_values:
+            return
+        
+        value = self.current_values[index]
+
+        if value is None:
+            text_detail = f"Node Index: {index + 1}\n\nEmpty"
+
+        else:
+            text_detail = (f"Node Index: {index + 1}\n\nValue: {value}\n\nLeft Child: {self.current_values[2 * index + 1]}\n\nRight Child: {self.current_values[2 * index + 2]}")
+
+        self.node_detail_label.config(text = text_detail)
 
     # This will make a text box where users can enter their input on each node
     def create_node_user_input(self, node_positions):
