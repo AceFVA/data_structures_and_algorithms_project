@@ -163,12 +163,17 @@ class BinaryTreeApp:
 
     def reset_tree(self):
         self.binary_tree_canvas.delete("all")
+
+        for entry in self.node_user_input:
+            entry.destroy()
+
         self.node_circles.clear()
         self.node_user_input.clear()
         self.show_value.clear()
         self.traversal_result_label.config(text = "")
         self.traversal_method_label.config(text = "")
-        
+        self.node_detail_label.config(text = "")
+
         if self.node_highlighter is not None:
             self.root.after_cancel(self.node_highlighter)
             self.node_highlighter = None
@@ -181,16 +186,39 @@ class BinaryTreeApp:
         if not self.current_values:
             return
         
-        value = self.current_values[index]
-
-        if value is None:
-            text_detail = f"Node Index: {index + 1}\n\nEmpty"
+        values = self.get_node_entries()
+        if values is None:
+            return
         
-        elif index == 0:
-            text_detail = f"Node Index: Root\nNode Value: {value}\n\n      Connections     \n\nParent: None\nLeft Child: {self.current_values[2 * index + 1]}\nRight Child: {self.current_values[2 * index + 2]}"
+        values = self.off_nodes(values)
+        self.current_values = values
+
+        node_value = values[index]
+        if node_value is None:
+            text_detail = f"Node Index: {index + 1}\n\nEmpty"
+            return
+        
+        def child_value(index):
+            if 0 <= index < len(values):
+                return values[index]
+            
+            else:
+                return None
+
+        if index != 0:   
+            parent_index = (index - 1) // 2
+
+        else: 
+            parent_index = None
+
+        left_child_index = 2 * index + 1
+        right_child_index = 2 * index + 2
+        
+        if index == 0:
+            text_detail = f"Node Index: Root\nNode Value: {node_value}\n\nConnections\n\nParent: None\nLeft Child: {child_value(left_child_index)}\nRight Child: {child_value(right_child_index)}"
 
         else:
-            text_detail = (f"Node Index: {index + 1}\nNode Value: {value}\n\n      Connections     \n\nParent: {self.current_values[(index - 1) // 2]}\nLeft Child: {self.current_values[2 * index + 1]}\nRight Child: {self.current_values[2 * index + 2]}")
+            text_detail = (f"Node Index: {index + 1}\nNode Value: {node_value}\n\nConnections\n\nParent: {child_value(parent_index)}\nLeft Child: {child_value(left_child_index)}\nRight Child: {child_value(right_child_index)}")
 
         self.node_detail_label.config(text = text_detail)
 
