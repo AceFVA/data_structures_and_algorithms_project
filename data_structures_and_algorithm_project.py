@@ -187,7 +187,7 @@ class BinaryTreeApp:
             values = self.current_values
 
         else:
-            if not self.current_values:
+            if not self.node_user_input:
                 return
         
             values = self.get_node_entries()
@@ -198,26 +198,37 @@ class BinaryTreeApp:
             self.current_values = values
 
         node_value = values[index]
-
-        if node_value is None:
-            text_detail = f"Node Index: {index + 1}\n\nEmpty"
-            return
         
         def child_value(index):
             if 0 <= index < len(values):
-                return values[index]
+                if values[index] is not None:
+                    return values[index]
+                
+                else:
+                    return "None"
             
             else:
-                return None
+                return "N/A"
 
-        if index != 0:   
+        if index != 0:
             parent_index = (index - 1) // 2
 
-        else: 
+        else:
             parent_index = None
 
         left_child_index = 2 * index + 1
         right_child_index = 2 * index + 2
+
+        if parent_index is not None:
+            parent_text = child_value(parent_index)
+
+        else: 
+            parent_text = "N/A"
+
+        if node_value is None:
+            text_detail = f"Node Index: {index + 1}\n\nNode Value: N/A\n\nConnections\n\nParent: {parent_text}\nLeft Child: N/A\nRight Child: N/A"
+            self.node_detail_label.config(text = text_detail)
+            return
         
         if index == 0:
             text_detail = f"Node Index: Root\nNode Value: {node_value}\n\nConnections\n\nParent: None\nLeft Child: {child_value(left_child_index)}\nRight Child: {child_value(right_child_index)}"
@@ -363,6 +374,7 @@ class BinaryTreeApp:
     def node_animation(self, order, step = 0, delay = 500):
         if step >= len(order):
             self.node_highlighter = None
+            self.node_color_reset()
             return
         
         result_index = order[step]
@@ -381,6 +393,17 @@ class BinaryTreeApp:
         self.binary_tree_canvas.itemconfig(self.node_circles[result_index], fill = self.current_color)
         self.node_highlighter = self.root.after(delay, lambda: self.node_animation(order, step + 1, delay))
         self.traversal_result_label.config(text = " ".join(self.show_value), fg = self.current_color)
+
+    def node_color_reset(self):
+        if not self.current_values:
+            return
+        
+        for index, value in enumerate(self.current_values):
+            if value is None:
+                self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "lightgray")
+
+            else: 
+                self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "yellow")
 
     # Identify traversal type and display result
     def traversals(self, method):
