@@ -157,7 +157,23 @@ class BinaryTreeApp:
         
         self.create_node_user_input(node_positions)
 
-        self.draw_tree_button.config(text = "Reset", command = self.draw_tree)
+        self.draw_tree_button.config(text = "Reset", command = self.reset_tree)
+
+    def reset_tree(self):
+        self.binary_tree_canvas.delete("all")
+        self.node_circles.clear()
+        self.node_user_input.clear()
+        self.show_value.clear()
+        self.traversal_result_label.config(text = "")
+        self.traversal_method_label.config(text = "")
+        
+        if self.node_highlighter is not None:
+            self.root.after_cancel(self.node_highlighter)
+            self.node_highlighter = None
+
+        self.warning_label.config(text = "")
+
+        self.draw_tree_button.config(text = "Draw Tree", command = self.draw_tree)
 
     # This will make a text box where users can enter their input on each node
     def create_node_user_input(self, node_positions):
