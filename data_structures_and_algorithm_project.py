@@ -183,17 +183,22 @@ class BinaryTreeApp:
         self.draw_tree_button.config(text = "Draw Tree", command = self.draw_tree)
 
     def show_node_details(self, index):
-        if not self.current_values:
-            return
+        if self.node_highlighter is not None and self.current_values:
+            values = self.current_values
+
+        else:
+            if not self.current_values:
+                return
         
-        values = self.get_node_entries()
-        if values is None:
-            return
+            values = self.get_node_entries()
+            if values is None:
+                return
         
-        values = self.off_nodes(values)
-        self.current_values = values
+            values = self.off_nodes(values, re_highlight = False)
+            self.current_values = values
 
         node_value = values[index]
+
         if node_value is None:
             text_detail = f"Node Index: {index + 1}\n\nEmpty"
             return
@@ -259,7 +264,7 @@ class BinaryTreeApp:
         return values
     
     # This will gray out the nodes under a node with a "?" entried by the user
-    def off_nodes(self, values):
+    def off_nodes(self, values, re_highlight = True):
         for index in range(len(values)):
             if values[index] is None:
                 left = 2 * index + 1 # left child
@@ -271,14 +276,13 @@ class BinaryTreeApp:
                 if right < len(values):
                     values[right] = None
 
-        for index, value in enumerate(values):
-            self.binary_tree_canvas.itemconfig(self.node_circles[index])
+        if re_highlight:
+            for index, value in enumerate(values):
+                if value is None:
+                    self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "lightgray")
 
-            if value is None:
-                self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "lightgray")
-
-            else: 
-                self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "yellow")
+                else: 
+                    self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "yellow")
 
         return values
     
