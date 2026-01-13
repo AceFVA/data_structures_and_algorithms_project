@@ -22,25 +22,26 @@ class BinaryTreeApp:
         self.current_method = ""
         self.current_values = []
         self.show_value = []
+        self.node_texts = []
 
         # Main Frame
         self.main_frame = tk.Frame(self.root)
-        self.main_frame.pack(side = tk.TOP, fill = tk.Y, expand = True, padx = (20, 20))
+        self.main_frame.pack(side = tk.TOP, fill = tk.Y, expand = True, padx = (10, 10))
 
         # Canvas for Binary Tree Visualization
         self.binary_tree_canvas = tk.Canvas(self.main_frame, width = 1200, height = 650, bg = "white", borderwidth = 3, relief = tk.RIDGE)
-        self.binary_tree_canvas.pack(side = tk.LEFT, padx = (20, 0))
+        self.binary_tree_canvas.pack(side = tk.LEFT, padx = (10, 0))
 
         # Control Buttons Frame
         self.button_frame = tk.Frame(self.main_frame, width = 720, height = 657, borderwidth = 3, relief = tk.RIDGE)
-        self.button_frame.pack(side = tk.RIGHT, padx = (0, 20))
+        self.button_frame.pack(side = tk.RIGHT, padx = (0, 10))
         self.button_frame.pack_propagate(0)
 
         self.control_buttons()
 
         # Traversal Result Frame
         self.traversal_result_frame = tk.Frame(self.root, width = 1920, height = 200, bg = "lightgray", borderwidth = 3,  relief = tk.RIDGE)
-        self.traversal_result_frame.pack(side = tk.BOTTOM, padx = (40, 40), pady = (0, 50))
+        self.traversal_result_frame.pack(side = tk.BOTTOM, padx = (20, 20), pady = (0, 10))
         self.traversal_result_frame.pack_propagate(0)
 
         self.traversal_title_label = tk.Label(self.traversal_result_frame, text = "Traversal Result:", font = ("Segoe UI", 14), bg = "lightgray")
@@ -83,6 +84,7 @@ class BinaryTreeApp:
     def draw_tree(self):
         self.binary_tree_canvas.delete("all")
         self.node_circles.clear()
+        self.node_texts.clear()
         self.show_value.clear()
         self.traversal_result_label.config(text = "")
         self.traversal_method_label.config(text = "")
@@ -131,8 +133,11 @@ class BinaryTreeApp:
                 level_node_positions.append((horizontal_position, vertical_position))
 
                 # Drawing circle for node
-                node_circle = self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow", tags = ("node",))
+                node_circle = self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow", outline = "black", width = 2,tags = ("node",))
                 self.node_circles.append(node_circle)
+
+                node_text = self.binary_tree_canvas.create_text(horizontal_position, vertical_position, text = "", font = ("Segoe UI", 10, "bold"))
+                self.node_texts.append(node_text)
 
                 self.binary_tree_canvas.tag_bind(node_circle, "<Button-1>", lambda event, index = len(self.node_circles) - 1: self.show_node_details(index))
 
@@ -234,7 +239,7 @@ class BinaryTreeApp:
             text_detail = f"Node Index: Root\nNode Value: {node_value}\n\nConnections\n\nParent: None\nLeft Child: {child_value(left_child_index)}\nRight Child: {child_value(right_child_index)}"
 
         else:
-            text_detail = (f"Node Index: {index + 1}\nNode Value: {node_value}\n\nConnections\n\nParent: {child_value(parent_index)}\nLeft Child: {child_value(left_child_index)}\nRight Child: {child_value(right_child_index)}")
+            text_detail = (f"Node Index: {index + 1}\nNode Value: {node_value}\n\nConnections\n\nParent: {parent_text}\nLeft Child: {child_value(left_child_index)}\nRight Child: {child_value(right_child_index)}")
 
         self.node_detail_label.config(text = text_detail)
 
@@ -291,10 +296,12 @@ class BinaryTreeApp:
             for index, value in enumerate(values):
                 if value is None:
                     self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "lightgray")
+                    self.binary_tree_canvas.itemconfig(self.node_texts[index], text = "")
 
                 else: 
                     self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "yellow")
-
+                    self.binary_tree_canvas.itemconfig(self.node_texts[index], text = value)
+        
         return values
     
     # Preorder Traversal
@@ -391,6 +398,8 @@ class BinaryTreeApp:
             self.show_value.append(get_value)
 
         self.binary_tree_canvas.itemconfig(self.node_circles[result_index], fill = self.current_color)
+        self.binary_tree_canvas.itemconfig(self.node_circles[result_index], outline = "pink", width = 2)
+        self.binary_tree_canvas.itemconfig(self.node_texts[result_index], fill = "white")
         self.node_highlighter = self.root.after(delay, lambda: self.node_animation(order, step + 1, delay))
         self.traversal_result_label.config(text = " ".join(self.show_value), fg = self.current_color)
 
@@ -405,6 +414,9 @@ class BinaryTreeApp:
             else: 
                 self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "yellow")
 
+            self.binary_tree_canvas.itemconfig(self.node_texts[index], fill = "black")
+            self.binary_tree_canvas.itemconfig(self.node_circles[index], outline = "black", width = 2)
+
     # Identify traversal type and display result
     def traversals(self, method):
         if self.traversal_warning_timer is not None:
@@ -418,6 +430,13 @@ class BinaryTreeApp:
             self.traversal_method_label.config(text = "")
             return
         
+        if self.node_highlighter is not None:
+            self.root.after_cancel(self.node_highlighter)
+            self.node_highlighter = None
+            self.node_color_reset()
+            self.show_value.clear()
+            self.traversal_result_label.config(text = "")
+
         values = self.get_node_entries()
 
         if values is None:
