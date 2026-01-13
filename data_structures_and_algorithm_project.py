@@ -55,8 +55,7 @@ class BinaryTreeApp:
     # Control Buttons
     def control_buttons(self):
         tk.Label(self.button_frame, text = "Number of Levels:", font = ("Segoe UI", 11)).pack(side = tk.TOP, pady = (20, 5))
-        self.level_entry = tk.Entry(self.button_frame, bg = "lightgray", width = 15, justify = "center", borderwidth = 1, relief = tk.SOLID)
-        self.level_entry.insert(0, "5")
+        self.level_entry = tk.Spinbox(self.button_frame, from_= 1, to = 5, state = "readonly", bg = "lightgray", width = 15, justify = "center", borderwidth = 1, relief = tk.SOLID)
         self.level_entry.pack(pady = (0, 10))
 
         self.draw_tree_button = tk.Button(self.button_frame, text = "Draw Tree", bg = "green", fg = "white", width = 20, height = 2, command = self.draw_tree)
@@ -87,7 +86,14 @@ class BinaryTreeApp:
         self.show_value.clear()
         self.traversal_result_label.config(text = "")
         self.traversal_method_label.config(text = "")
-        levels = self.level_entry.get()
+        
+        try: 
+            levels = int(self.level_entry.get())
+            
+        except ValueError:
+            self.warning_label.config(text = "Please select a number of levels.")
+            self.tree_warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
+            return
 
         # Reset timers
         if self.node_highlighter is not None:
@@ -105,20 +111,6 @@ class BinaryTreeApp:
             self.tree_warning_timer = None
 
         self.traversal_title_label.config(text = "Traversal Result:", fg = "black")
-        
-        try: 
-            if int(levels) > 5:
-                self.warning_label.config(text = "Maximum level reached (5)\nPlease try again.")
-                self.tree_warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
-                return
-
-            if int(levels) < 1:
-                raise ValueError
-            
-        except ValueError:
-            self.warning_label.config(text = "Invalid input.\nPlease enter a valid positive integer.")
-            self.tree_warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
-            return
         
         # Parameters for making the binary tree
         canvas_width = 1200
@@ -164,6 +156,8 @@ class BinaryTreeApp:
             self.binary_tree_canvas.tag_lower("line")
         
         self.create_node_user_input(node_positions)
+
+        self.draw_tree_button.config(text = "Reset", command = self.draw_tree)
 
     # This will make a text box where users can enter their input on each node
     def create_node_user_input(self, node_positions):
