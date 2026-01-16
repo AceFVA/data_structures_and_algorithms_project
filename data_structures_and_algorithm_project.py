@@ -23,10 +23,11 @@ class BinaryTreeApp:
         self.current_values = []
         self.show_value = []
         self.node_texts = []
+        self.clicked_circle = None
 
         # Main Frame
         self.main_frame = tk.Frame(self.root)
-        self.main_frame.pack(side = tk.TOP, fill = tk.Y, expand = True, padx = (10, 10))
+        self.main_frame.pack(side = tk.TOP, fill = tk.BOTH, expand = True, padx = (10, 10))
 
         # Canvas for Binary Tree Visualization
         self.binary_tree_canvas = tk.Canvas(self.main_frame, width = 1200, height = 650, bg = "white", borderwidth = 3, relief = tk.RIDGE)
@@ -166,6 +167,7 @@ class BinaryTreeApp:
 
         self.draw_tree_button.config(text = "Reset", command = self.reset_tree)
 
+    # Lets the user have a choice to reset the tree after creating one
     def reset_tree(self):
         self.binary_tree_canvas.delete("all")
 
@@ -187,7 +189,14 @@ class BinaryTreeApp:
 
         self.draw_tree_button.config(text = "Draw Tree", command = self.draw_tree)
 
+    # displays the information about the clicked node
     def show_node_details(self, index):
+        self.clicked_circle = self.node_circles[index]
+        if self.clicked_circle is not None:
+            self.binary_tree_canvas.itemconfig(self.clicked_circle, outline = "black", width = 2)
+
+        self.binary_tree_canvas.itemconfig(self.clicked_circle, outline = "red", width = 2)
+
         if self.node_highlighter is not None and self.current_values:
             values = self.current_values
 
@@ -230,14 +239,17 @@ class BinaryTreeApp:
         else: 
             parent_text = "N/A"
 
+        # if the node has a value "?" as an entry
         if node_value is None:
             text_detail = f"Node Index: {index + 1}\n\nNode Value: N/A\n\nConnections\n\nParent: {parent_text}\nLeft Child: N/A\nRight Child: N/A"
             self.node_detail_label.config(text = text_detail)
             return
         
+        # if the node is the root
         if index == 0:
             text_detail = f"Node Index: Root\nNode Value: {node_value}\n\nConnections\n\nParent: None\nLeft Child: {child_value(left_child_index)}\nRight Child: {child_value(right_child_index)}"
 
+        # if the node is a descendants of the root
         else:
             text_detail = (f"Node Index: {index + 1}\nNode Value: {node_value}\n\nConnections\n\nParent: {parent_text}\nLeft Child: {child_value(left_child_index)}\nRight Child: {child_value(right_child_index)}")
 
@@ -398,7 +410,6 @@ class BinaryTreeApp:
             self.show_value.append(get_value)
 
         self.binary_tree_canvas.itemconfig(self.node_circles[result_index], fill = self.current_color)
-        self.binary_tree_canvas.itemconfig(self.node_circles[result_index], outline = "pink", width = 2)
         self.binary_tree_canvas.itemconfig(self.node_texts[result_index], fill = "white")
         self.node_highlighter = self.root.after(delay, lambda: self.node_animation(order, step + 1, delay))
         self.traversal_result_label.config(text = " ".join(self.show_value), fg = self.current_color)
