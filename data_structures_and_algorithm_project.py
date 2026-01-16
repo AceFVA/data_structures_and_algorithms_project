@@ -25,10 +25,14 @@ class BinaryTreeApp:
         self.node_texts = []
         self.clicked_circle = None
 
+        self.root.grid_rowconfigure(0, weight = 1)
+        self.root.grid_rowconfigure(1, weight = 0)
+        self.root.grid_columnconfigure(0, weight = 1)
+
         # Traversal Result Frame
         self.traversal_result_frame = tk.Frame(self.root, height = 150, borderwidth = 2,  relief = tk.RIDGE)
-        self.traversal_result_frame.pack(side = tk.BOTTOM, fill = tk.X, padx = 20, pady = (0, 10))
-        self.traversal_result_frame.pack_propagate(0)
+        self.traversal_result_frame.grid(row = 1, column = 0, sticky = tk.EW, padx = 10, pady = (5, 10))
+        self.traversal_result_frame.grid_propagate(0)
 
         self.traversal_title_label = tk.Label(self.traversal_result_frame, text = "Traversal Result:", font = ("Segoe UI", 14))
         self.traversal_title_label.pack(pady = 5)
@@ -41,16 +45,24 @@ class BinaryTreeApp:
 
         # Main Frame
         self.main_frame = tk.Frame(self.root)
-        self.main_frame.pack(fill = tk.BOTH, expand = True, padx = 10, pady = (10, 0))
+        self.main_frame.grid(row = 0, column = 0, sticky = tk.NSEW, padx = 10, pady = 10)
+        self.main_frame.grid_rowconfigure(0, weight = 1)
+        self.main_frame.grid_columnconfigure(0, weight = 1)
+        self.main_frame.grid_columnconfigure(1, weight = 0)
 
         # Canvas for Binary Tree Visualization
-        self.binary_tree_canvas = tk.Canvas(self.main_frame, width = 1200, height = 600, bg = "white", borderwidth = 2, relief = tk.RIDGE)
-        self.binary_tree_canvas.pack(side = tk.LEFT, fill = tk.BOTH, expand = True, padx = (10, 5), pady = 10)
+        self.binary_tree_canvas = tk.Canvas(self.main_frame, bg = "white", borderwidth = 2, relief = tk.RIDGE)
+        self.binary_tree_canvas.grid(row = 0, column = 0, sticky = tk.NSEW, padx = (0, 5))
 
         # Control Buttons Frame
-        self.button_frame = tk.Frame(self.main_frame, width = 720, height = 600, borderwidth = 2, relief = tk.RIDGE)
-        self.button_frame.pack(side = tk.RIGHT, fill = tk.Y, expand = False, padx = (5, 10), pady = 10)
-        self.button_frame.pack_propagate(0)
+        self.button_frame = tk.Frame(self.main_frame, width = 300, borderwidth = 2, relief = tk.RIDGE)
+        self.button_frame.grid(row = 0, column = 1, sticky = tk.NS, padx = (5, 0))
+        self.button_frame.grid_propagate(0)
+
+        self.button_frame.grid_rowconfigure(0, weight = 1)
+        self.button_frame.grid_rowconfigure(1, weight = 1)
+        self.button_frame.grid_rowconfigure(2, weight = 1)
+        self.button_frame.grid_columnconfigure(0, weight = 1)
 
         self.selecting_level_box = tk.LabelFrame(self.button_frame, text = "Select a level:", padx = 20, pady = 10)
         self.selecting_level_box.pack(fill = tk.BOTH, expand = True, padx = 15, pady = 10)
@@ -65,14 +77,14 @@ class BinaryTreeApp:
 
     # Control Buttons
     def control_buttons(self):
-        self.level_entry = tk.Spinbox(self.selecting_level_box, from_= 1, to = 5, state = "readonly", bg = "lightgray", width = 20, justify = "center", borderwidth = 1, relief = tk.SOLID)
-        self.level_entry.pack(pady = (0, 10))
+        self.level_entry = tk.Spinbox(self.selecting_level_box, from_= 1, to = 5, state = "readonly", bg = "lightgray", width = 20, justify = "center", borderwidth = 1, relief = tk.SUNKEN)
+        self.level_entry.pack(pady = (5, 5))
 
         self.draw_tree_button = tk.Button(self.selecting_level_box, text = "Draw Tree", bg = "green", fg = "white", width = 20, height = 1, command = self.draw_tree)
-        self.draw_tree_button.pack(padx = (5, 5),pady = 5)
+        self.draw_tree_button.pack(padx = 5, pady = 5)
 
-        self.warning_label = tk.Label(self.selecting_level_box, text = "", font = ("Segoe UI", 9), fg = "red")
-        self.warning_label.pack(pady = 5)
+        self.warning_label = tk.Label(self.selecting_level_box, text = "", font = ("Segoe UI", 8), fg = "red")
+        self.warning_label.pack(pady = 1)
         self.warning_timer = None
 
         self.traversals_label = tk.Label(self.selecting_traversal_box, text = "Traversals", font = ("Segoe UI", 11))
@@ -281,7 +293,7 @@ class BinaryTreeApp:
                     raise ValueError
                 
             except ValueError:
-                self.warning_label.config(text = "Missing node value.\nPlease input any value first\nor '?' if its an empty node.")
+                self.warning_label.config(text = "Missing node value. Please input any\nvalue first or '?' if its an empty node.")
                 self.tree_warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
                 return
 
