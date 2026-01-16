@@ -6,6 +6,7 @@
     # 4. Generate the created binary tree and display it along with its traversals (in-order, pre-order, post-order). 
 
 import tkinter as tk
+from tkinter import ttk
 
 # Binary Tree Application
 class BinaryTreeApp:
@@ -29,22 +30,18 @@ class BinaryTreeApp:
         self.root.grid_rowconfigure(1, weight = 0)
         self.root.grid_columnconfigure(0, weight = 1)
 
-        # Traversal Result Frame
-        self.traversal_result_frame = tk.Frame(self.root, height = 150, borderwidth = 2,  relief = tk.RIDGE)
-        self.traversal_result_frame.grid(row = 1, column = 0, sticky = tk.EW, padx = 10, pady = (5, 10))
-        self.traversal_result_frame.grid_propagate(0)
+        style = ttk.Style(self.root)
+        style.theme_use("clam")
 
-        self.traversal_title_label = tk.Label(self.traversal_result_frame, text = "Traversal Result:", font = ("Segoe UI", 14))
-        self.traversal_title_label.pack(pady = 5)
+        style.configure("DrawTree.TButton", foreground = "white", background = "green")
+        style.map("DrawTree.TButton", background = [("active", "dark green")])
 
-        self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 28))
-        self.traversal_result_label.pack(pady = 5)
-
-        self.traversal_method_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 9))
-        self.traversal_method_label.pack(pady = 5)
+        style.configure("Preorder.TButton", foreground = "white", background = "blue")
+        style.configure("Inorder.TButton", foreground = "white", background = "orange")
+        style.configure("Postorder.TButton", foreground = "white", background = "purple")
 
         # Main Frame
-        self.main_frame = tk.Frame(self.root)
+        self.main_frame = ttk.Frame(self.root)
         self.main_frame.grid(row = 0, column = 0, sticky = tk.NSEW, padx = 10, pady = 10)
         self.main_frame.grid_rowconfigure(0, weight = 1)
         self.main_frame.grid_columnconfigure(0, weight = 1)
@@ -55,7 +52,7 @@ class BinaryTreeApp:
         self.binary_tree_canvas.grid(row = 0, column = 0, sticky = tk.NSEW, padx = (0, 5))
 
         # Control Buttons Frame
-        self.button_frame = tk.Frame(self.main_frame, width = 300, borderwidth = 2, relief = tk.RIDGE)
+        self.button_frame = ttk.Frame(self.main_frame)
         self.button_frame.grid(row = 0, column = 1, sticky = tk.NS, padx = (5, 0))
         self.button_frame.grid_propagate(0)
 
@@ -64,39 +61,53 @@ class BinaryTreeApp:
         self.button_frame.grid_rowconfigure(2, weight = 1)
         self.button_frame.grid_columnconfigure(0, weight = 1)
 
-        self.selecting_level_box = tk.LabelFrame(self.button_frame, text = "Select a level:", padx = 20, pady = 10)
+        self.selecting_level_box = ttk.LabelFrame(self.button_frame, text = "Select a level:")
         self.selecting_level_box.pack(fill = tk.BOTH, expand = True, padx = 15, pady = 10)
 
-        self.selecting_traversal_box = tk.LabelFrame(self.button_frame, text = "Select a traversal method:", padx = 20, pady = 10)
+        self.selecting_traversal_box = ttk.LabelFrame(self.button_frame, text = "Select a traversal method:")
         self.selecting_traversal_box.pack(fill = tk.BOTH, expand = True, padx = 15, pady = 10)
 
-        self.displaying_selected_node_info = tk.LabelFrame(self.button_frame, text = "Selected Node:", padx = 20, pady = 10)
+        self.displaying_selected_node_info = ttk.LabelFrame(self.button_frame, text = "Selected Node:")
         self.displaying_selected_node_info.pack(fill = tk.BOTH, expand = True, padx = 15, pady = 10)
 
         self.control_buttons()
 
+        # Traversal Result Frame
+        self.traversal_result_frame = ttk.Frame(self.root)
+        self.traversal_result_frame.grid(row = 1, column = 0, sticky = tk.EW, padx = 10, pady = (5, 10))
+        self.traversal_result_frame.grid_propagate(0)
+
+        self.traversal_title_label = ttk.Label(self.traversal_result_frame, text = "Traversal Result:", font = ("Segoe UI", 14))
+        self.traversal_title_label.pack(pady = 5)
+
+        self.traversal_result_label = ttk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 28))
+        self.traversal_result_label.pack(pady = 5)
+
+        self.traversal_method_label = ttk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 9))
+        self.traversal_method_label.pack(pady = 5)
+
     # Control Buttons
     def control_buttons(self):
-        self.level_entry = tk.Spinbox(self.selecting_level_box, from_= 1, to = 5, state = "readonly", bg = "lightgray", width = 20, justify = "center", borderwidth = 1, relief = tk.SUNKEN)
+        self.level_entry = ttk.Spinbox(self.selecting_level_box, from_= 1, to = 5, state = "readonly", width = 20, justify = "center")
         self.level_entry.pack(pady = (5, 5))
 
-        self.draw_tree_button = tk.Button(self.selecting_level_box, text = "Draw Tree", bg = "green", fg = "white", width = 20, height = 1, command = self.draw_tree)
+        self.draw_tree_button = ttk.Button(self.selecting_level_box, text = "Draw Tree", command = self.draw_tree, style = "DrawTree.TButton")
         self.draw_tree_button.pack(padx = 5, pady = 5)
 
-        self.warning_label = tk.Label(self.selecting_level_box, text = "", font = ("Segoe UI", 8), fg = "red")
+        self.warning_label = ttk.Label(self.selecting_level_box, text = "", foreground = "red")
         self.warning_label.pack(pady = 1)
         self.warning_timer = None
 
-        self.traversals_label = tk.Label(self.selecting_traversal_box, text = "Traversals", font = ("Segoe UI", 11))
+        self.traversals_label = ttk.Label(self.selecting_traversal_box, text = "Traversals", font = ("Segoe UI", 11))
         self.traversals_label.pack(pady = (5, 0))
-        self.preorder_traversal = tk.Button(self.selecting_traversal_box, text = "Preorder", bg = "blue", fg = "white", width = 20, command = lambda: self.traversals("Preorder"))
+        self.preorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Preorder", command = lambda: self.traversals("Preorder"), style = "Preorder.TButton")
         self.preorder_traversal.pack(padx = 5, pady = 5)
-        self.inorder_traversal = tk.Button(self.selecting_traversal_box, text = "Inorder", bg = "orange", fg = "white", width = 20, command = lambda: self.traversals("Inorder"))
+        self.inorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Inorder", command = lambda: self.traversals("Inorder"), style = "Inorder.TButton")
         self.inorder_traversal.pack(padx = 5, pady = 5)
-        self.postorder_traversal = tk.Button(self.selecting_traversal_box, text = "Postorder", bg = "purple", fg = "white", width = 20, command = lambda: self.traversals("Postorder"))
+        self.postorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Postorder", command = lambda: self.traversals("Postorder"), style = "Postorder.TButton")
         self.postorder_traversal.pack(padx = 5, pady = 5) 
 
-        self.node_detail_title_label = tk.Label(self.displaying_selected_node_info, text = "Node Info", font = ("Segoe", 11))
+        self.node_detail_title_label = ttk.Label(self.displaying_selected_node_info, text = "Node Info", font = ("Segoe", 11))
         self.node_detail_title_label.pack(pady = (10, 5))
         self.node_detail_label = tk.Label(self.displaying_selected_node_info, fg = "red", width = 20, height = 20, font = ("Segoe", 12), relief = tk.SUNKEN)
         self.node_detail_label.pack(padx = 5, pady  = (5, 10))
