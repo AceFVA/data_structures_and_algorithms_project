@@ -12,7 +12,7 @@ class BinaryTreeApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Binary Tree")
-        self.root.geometry("1920x1080")
+        self.root.state("zoomed")
         self.node_user_input = []
         self.node_circles = []
         self.node_highlighter = None
@@ -191,12 +191,6 @@ class BinaryTreeApp:
 
     # displays the information about the clicked node
     def show_node_details(self, index):
-        self.clicked_circle = self.node_circles[index]
-        if self.clicked_circle is not None:
-            self.binary_tree_canvas.itemconfig(self.clicked_circle, outline = "black", width = 2)
-
-        self.binary_tree_canvas.itemconfig(self.clicked_circle, outline = "red", width = 2)
-
         if self.node_highlighter is not None and self.current_values:
             values = self.current_values
 
@@ -210,6 +204,12 @@ class BinaryTreeApp:
         
             values = self.off_nodes(values, re_highlight = False)
             self.current_values = values
+
+        if self.clicked_circle is not None:
+            self.binary_tree_canvas.itemconfig(self.clicked_circle, outline = "black", width = 2)
+
+        self.clicked_circle = self.node_circles[index]
+        self.binary_tree_canvas.itemconfig(self.clicked_circle, outline = "red", width = 2)
 
         node_value = values[index]
         
