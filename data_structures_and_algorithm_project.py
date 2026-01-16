@@ -25,6 +25,20 @@ class BinaryTreeApp:
         self.node_texts = []
         self.clicked_circle = None
 
+        # Traversal Result Frame
+        self.traversal_result_frame = tk.Frame(self.root, height = 150, borderwidth = 2,  relief = tk.RIDGE)
+        self.traversal_result_frame.pack(side = tk.BOTTOM, fill = tk.X, padx = 20, pady = (0, 10))
+        self.traversal_result_frame.pack_propagate(0)
+
+        self.traversal_title_label = tk.Label(self.traversal_result_frame, text = "Traversal Result:", font = ("Segoe UI", 14))
+        self.traversal_title_label.pack(pady = 5)
+
+        self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 28))
+        self.traversal_result_label.pack(pady = 5)
+
+        self.traversal_method_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 9))
+        self.traversal_method_label.pack(pady = 5)
+
         # Main Frame
         self.main_frame = tk.Frame(self.root)
         self.main_frame.pack(fill = tk.BOTH, expand = True, padx = 10, pady = (10, 0))
@@ -35,7 +49,7 @@ class BinaryTreeApp:
 
         # Control Buttons Frame
         self.button_frame = tk.Frame(self.main_frame, width = 720, height = 600, borderwidth = 2, relief = tk.RIDGE)
-        self.button_frame.pack(side = tk.RIGHT, fill = tk.BOTH, expand = True, padx = (5, 10), pady = 10)
+        self.button_frame.pack(side = tk.RIGHT, fill = tk.Y, expand = False, padx = (5, 10), pady = 10)
         self.button_frame.pack_propagate(0)
 
         self.selecting_level_box = tk.LabelFrame(self.button_frame, text = "Select a level:", padx = 20, pady = 10)
@@ -48,20 +62,6 @@ class BinaryTreeApp:
         self.displaying_selected_node_info.pack(fill = tk.BOTH, expand = True, padx = 15, pady = 10)
 
         self.control_buttons()
-
-        # Traversal Result Frame
-        self.traversal_result_frame = tk.Frame(self.root, height = 200, borderwidth = 2,  relief = tk.RIDGE)
-        self.traversal_result_frame.pack(side = tk.BOTTOM, fill = tk.X, padx = 10, pady = 10)
-        self.traversal_result_frame.pack_propagate(0)
-
-        self.traversal_title_label = tk.Label(self.traversal_result_frame, text = "Traversal Result:", font = ("Segoe UI", 14))
-        self.traversal_title_label.pack(pady = 5)
-
-        self.traversal_result_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 28))
-        self.traversal_result_label.pack(pady = 5)
-
-        self.traversal_method_label = tk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 9))
-        self.traversal_method_label.pack(pady = 5)
 
     # Control Buttons
     def control_buttons(self):
