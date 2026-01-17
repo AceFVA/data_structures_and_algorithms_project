@@ -85,11 +85,13 @@ class BinaryTreeApp:
 
 #------------------- Traversal Result Frame -------------------#
         self.traversal_result_frame = ttk.Frame(self.root)
-        self.traversal_result_frame.grid(row = 1, column = 0, sticky = tk.EW, padx = 10, pady = (5, 10))
+        self.traversal_result_frame.grid(row = 1, column = 0, sticky = tk.EW, padx = 10, pady = (0, 10))
         self.traversal_result_frame.grid_propagate(0)
 
         self.traversal_title_label = ttk.Label(self.traversal_result_frame, text = "Traversal Result:", font = ("Segoe UI", 14), anchor = "center", justify = "center")
-        self.traversal_title_label.pack(pady = 5)
+        self.traversal_title_label.pack(pady = (5, 0), fill = tk.X)
+        self.traversal_warning_label = ttk.Label(self.traversal_result_frame, text = "\n", foreground = "red", anchor = "center", justify = "center")
+        self.traversal_warning_label.pack(pady = (0, 5), fill = tk.X)
 
         self.traversal_result_label = ttk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 28), anchor = "center", justify = "center")
         self.traversal_result_label.pack(pady = 5)
@@ -176,9 +178,15 @@ class BinaryTreeApp:
         canvas_width = self.binary_tree_canvas.winfo_width()
         canvas_height = self.binary_tree_canvas.winfo_height()
 
+        if canvas_width < 200:
+            canvas_width = 1200
+        
+        if canvas_height < 200:
+            canvas_height = 600
+
         node_radius = 20
-        vertical_spacing = min(100, (canvas_height - 40) // max(1, levels))
-        top_margin = 100 
+        top_margin = 50
+        vertical_spacing = max(60, min(100, (canvas_height - (top_margin + 40)) // max(1, levels))) 
 
         node_positions = [] # To store positions of nodes for drawing connections
 
@@ -202,6 +210,7 @@ class BinaryTreeApp:
 
                 index = len(self.node_circles) - 1
                 self.binary_tree_canvas.tag_bind(node_circle, "<Button-1>", lambda event, i = index: self.show_node_details(i))
+                self.binary_tree_canvas.tag_bind(node_text, "<Button-1>", lambda event, i = index: self.show_node_details(i))
 
             # Store each node's position separated by its level
             node_positions.append(level_node_positions)
@@ -238,6 +247,9 @@ class BinaryTreeApp:
         self.node_circles.clear()
         self.node_user_input.clear()
         self.show_value.clear()
+        self.current_values = []
+        self.current_color = ""
+        self.current_method = ""
         self.traversal_result_label.config(text = "")
         self.traversal_method_label.config(text = "")
         self.node_info_index_val.config(text = "?")
@@ -245,6 +257,12 @@ class BinaryTreeApp:
         self.node_info_parent_val.config(text = "?")
         self.node_info_left_chld_val.config(text = "?")
         self.node_info_right_chld_val.config(text = "?")
+
+        if self.traversal_warning_timer is not None:
+            self.root.after_cancel(self.traversal_warning_timer)
+            self.root.warning_timer = None
+
+        self.traversal_warning_label.config(text = "\n")
 
         if self.node_highlighter is not None:
             self.root.after_cancel(self.node_highlighter)
@@ -503,12 +521,13 @@ class BinaryTreeApp:
             self.traversal_warning_timer = None
 
         if not self.node_user_input:
-            self.traversal_title_label.config(text = "Traversal Result:\n\nDraw the Binary Tree first.", foreground = "red")
-            self.traversal_warning_timer = self.root.after(1000, lambda: self.traversal_title_label.config(text = "Traversal Result: ", foreground = "black"))
+            self.traversal_warning_label.config(text = "Draw the Binary Tree first.\n")
+            self.traversal_warning_timer = self.root.after(1000, lambda: self.traversal_warning_label.config(text = "\n"))
             self.traversal_result_label.config(text = "")
             self.traversal_method_label.config(text = "")
+
             return
-        
+
         if self.node_highlighter is not None:
             self.root.after_cancel(self.node_highlighter)
             self.node_highlighter = None
@@ -536,7 +555,7 @@ class BinaryTreeApp:
 
         elif method == "Postorder":
             result = self.postorder(values)
-            font_color = "purple"
+            font_color = "violet"
 
         if self.node_highlighter is not None:
             self.root.after_cancel(self.node_highlighter)
