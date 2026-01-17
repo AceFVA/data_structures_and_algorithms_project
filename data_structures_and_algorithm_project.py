@@ -110,11 +110,11 @@ class BinaryTreeApp:
         self.traversals_label = ttk.Label(self.selecting_traversal_box, text = "Traversals", font = ("Segoe UI", 11))
         self.traversals_label.grid(row = 0, column = 0, sticky = tk.NS, pady = (5, 0))
         self.preorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Preorder", command = lambda: self.traversals("Preorder"), style = "Preorder.TButton")
-        self.preorder_traversal.grid(row = 1, column = 0, sticky = tk.NS, padx = 5, pady = 5)
+        self.preorder_traversal.grid(row = 1, column = 0, sticky = tk.EW, padx = 5, pady = 5)
         self.inorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Inorder", command = lambda: self.traversals("Inorder"), style = "Inorder.TButton")
-        self.inorder_traversal.grid(row = 2, column = 0, sticky = tk.NS, padx = 5, pady = 5)
+        self.inorder_traversal.grid(row = 2, column = 0, sticky = tk.EW, padx = 5, pady = 5)
         self.postorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Postorder", command = lambda: self.traversals("Postorder"), style = "Postorder.TButton")
-        self.postorder_traversal.grid(row = 3, column = 0, sticky = tk.NS, padx = 5, pady = 5) 
+        self.postorder_traversal.grid(row = 3, column = 0, sticky = tk.EW, padx = 5, pady = 5) 
 
         # Selected Info tab
         # Column 0
@@ -165,7 +165,7 @@ class BinaryTreeApp:
             self.root.after_cancel(self.tree_warning_timer)
             self.tree_warning_timer = None
 
-        self.traversal_title_label.config(text = "Traversal Result:", fg = "black")
+        self.traversal_title_label.config(text = "Traversal Result:", foreground = "black")
         
         # Parameters for making the binary tree
         canvas_width = 1200
@@ -192,7 +192,8 @@ class BinaryTreeApp:
                 node_text = self.binary_tree_canvas.create_text(horizontal_position, vertical_position, text = "", font = ("Segoe UI", 10, "bold"))
                 self.node_texts.append(node_text)
 
-                self.binary_tree_canvas.tag_bind(node_circle, "<Button-1>", lambda event, index = len(self.node_circles) - 1: self.show_node_details(index))
+                index = len(self.node_circles - 1)
+                self.binary_tree_canvas.tag_bind(node_circle, "<Button-1>", lambda event, i = index: self.show_node_details(i))
 
             # Store each node's position separated by its level
             node_positions.append(level_node_positions)
@@ -470,7 +471,7 @@ class BinaryTreeApp:
         self.binary_tree_canvas.itemconfig(self.node_circles[result_index], fill = self.current_color)
         self.binary_tree_canvas.itemconfig(self.node_texts[result_index], fill = "white")
         self.node_highlighter = self.root.after(delay, lambda: self.node_animation(order, step + 1, delay))
-        self.traversal_result_label.config(text = " ".join(self.show_value), fg = self.current_color)
+        self.traversal_result_label.config(text = " ".join(self.show_value), foreground = self.current_color)
 
 #------------------- Color Resetter -------------------#
     def node_color_reset(self):
@@ -494,8 +495,8 @@ class BinaryTreeApp:
             self.traversal_warning_timer = None
 
         if not self.node_user_input:
-            self.traversal_title_label.config(text = "Traversal Result:\n\nDraw the Binary Tree first.", fg = "red")
-            self.traversal_warning_timer = self.root.after(1000, lambda: self.traversal_title_label.config(text = "Traversal Result: ", fg = "black"))
+            self.traversal_title_label.config(text = "Traversal Result:\n\nDraw the Binary Tree first.", foreground = "red")
+            self.traversal_warning_timer = self.root.after(1000, lambda: self.traversal_title_label.config(text = "Traversal Result: ", foreground = "black"))
             self.traversal_result_label.config(text = "")
             self.traversal_method_label.config(text = "")
             return
@@ -536,8 +537,8 @@ class BinaryTreeApp:
         self.current_color = font_color
         self.current_method = method
 
-        self.traversal_result_label.config(text = "", fg = self.current_color)
-        self.traversal_method_label.config(text = self.current_method, fg = self.current_color)
+        self.traversal_result_label.config(text = "", foreground = self.current_color)
+        self.traversal_method_label.config(text = self.current_method, foreground = self.current_color)
 
         self.node_animation(result)
 
