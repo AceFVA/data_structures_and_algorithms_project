@@ -126,11 +126,16 @@ class BinaryTreeApp:
         self.node_info_right_chld = ttk.Label(self.displaying_selected_node_info, text = "Right Child:").grid(row = 5, column = 0, sticky = tk.W, padx = 10)
 
         # Column 1
-        self.node_info_index_val = ttk.Label(self.displaying_selected_node_info, text = "?").grid(row = 1, column = 1, sticky = tk.W, padx = 10)
-        self.node_info_value_val = ttk.Label(self.displaying_selected_node_info, text = "?").grid(row = 2, column = 1, sticky = tk.W, padx = 10)
-        self.node_info_parent_val = ttk.Label(self.displaying_selected_node_info, text = "?").grid(row = 3, column = 1, sticky = tk.W, padx = 10)
-        self.node_info_left_chld_val = ttk.Label(self.displaying_selected_node_info, text = "?").grid(row = 4, column = 1, sticky = tk.W, padx = 10)
-        self.node_info_right_chld_val = ttk.Label(self.displaying_selected_node_info, text = "?").grid(row = 5, column = 1, sticky = tk.W, padx = 10)
+        self.node_info_index_val = ttk.Label(self.displaying_selected_node_info, text = "?")
+        self.node_info_index_val.grid(row = 1, column = 1, sticky = tk.W, padx = 10)
+        self.node_info_value_val = ttk.Label(self.displaying_selected_node_info, text = "?")
+        self.node_info_value_val.grid(row = 2, column = 1, sticky = tk.W, padx = 10)
+        self.node_info_parent_val = ttk.Label(self.displaying_selected_node_info, text = "?")
+        self.node_info_parent_val.grid(row = 3, column = 1, sticky = tk.W, padx = 10)
+        self.node_info_left_chld_val = ttk.Label(self.displaying_selected_node_info, text = "?")
+        self.node_info_left_chld_val.grid(row = 4, column = 1, sticky = tk.W, padx = 10)
+        self.node_info_right_chld_val = ttk.Label(self.displaying_selected_node_info, text = "?")
+        self.node_info_right_chld_val.grid(row = 5, column = 1, sticky = tk.W, padx = 10)
 
 
         
@@ -226,7 +231,11 @@ class BinaryTreeApp:
         self.show_value.clear()
         self.traversal_result_label.config(text = "")
         self.traversal_method_label.config(text = "")
-        self.node_detail_label.config(text = "")
+        self.node_info_index_val.config(text = "?")
+        self.node_info_value_val.config(text = "?")
+        self.node_info_parent_val.config(text = "?")
+        self.node_info_left_chld_val.config(text = "?")
+        self.node_info_right_chld_val.config(text = "?")
 
         if self.node_highlighter is not None:
             self.root.after_cancel(self.node_highlighter)
@@ -286,21 +295,23 @@ class BinaryTreeApp:
         else: 
             parent_text = "N/A"
 
-        # if the node has a value "?" as an entry
-        if node_value is None:
-            text_detail = f"Node Index: {index + 1}\n\nNode Value: N/A\n\nConnections\n\nParent: {parent_text}\nLeft Child: N/A\nRight Child: N/A"
-            self.node_detail_label.config(text = text_detail)
-            return
-        
-        # if the node is the root
         if index == 0:
-            text_detail = f"Node Index: Root\nNode Value: {node_value}\n\nConnections\n\nParent: None\nLeft Child: {child_value(left_child_index)}\nRight Child: {child_value(right_child_index)}"
+            self.node_info_index_val.config(text = "Root")
+            self.node_info_parent_val.config(text = "None")
 
-        # if the node is a descendants of the root
+        else: 
+            self.node_info_index_val.config(text = str(index + 1))
+            self.node_info_parent_val.config(text = parent_text)
+
+        if node_value is None:
+            self.node_info_value_val.config(text = "N/A")
+            self.node_info_left_chld_val.config(text = "N/A")
+            self.node_info_right_chld_val.config(text = "N/A")
+
         else:
-            text_detail = (f"Node Index: {index + 1}\nNode Value: {node_value}\n\nConnections\n\nParent: {parent_text}\nLeft Child: {child_value(left_child_index)}\nRight Child: {child_value(right_child_index)}")
-
-        self.node_detail_label.config(text = text_detail)
+            self.node_info_value_val.config(text = node_value)
+            self.node_info_left_chld_val.config(text = child_value(left_child_index))
+            self.node_info_right_chld_val.config(text = child_value(right_child_index))
 
 #------------------- This will make a text box where users can enter their input on each node -------------------#
     def create_node_user_input(self, node_positions):
