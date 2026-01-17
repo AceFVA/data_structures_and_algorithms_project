@@ -53,22 +53,31 @@ class BinaryTreeApp:
 
         # Control Buttons Frame
         self.button_frame = ttk.Frame(self.main_frame)
+        self.button_frame.config(width = 320)
         self.button_frame.grid(row = 0, column = 1, sticky = tk.NS, padx = (5, 0))
         self.button_frame.grid_propagate(0)
 
-        self.button_frame.grid_rowconfigure(0, weight = 1)
-        self.button_frame.grid_rowconfigure(1, weight = 1)
-        self.button_frame.grid_rowconfigure(2, weight = 1)
+        for index in range(3):
+            self.button_frame.grid_rowconfigure(index, weight = 1)
+
         self.button_frame.grid_columnconfigure(0, weight = 1)
 
+        self.node_info = ttk.Frame(self.button_frame)
+
+        for index in range(6):
+            self.node_info.grid_rowconfigure(index, weight = 1)
+        
+        self.node_info.grid_columnconfigure(0, weight = 1)
+        self.node_info.grid_columnconfigure(1, weight = 3)
+
         self.selecting_level_box = ttk.LabelFrame(self.button_frame, text = "Select a level:")
-        self.selecting_level_box.pack(fill = tk.BOTH, expand = True, padx = 15, pady = 10)
+        self.selecting_level_box.grid(row = 0, column = 0, sticky = tk.NSEW, padx = 15, pady = (10, 5))
 
         self.selecting_traversal_box = ttk.LabelFrame(self.button_frame, text = "Select a traversal method:")
-        self.selecting_traversal_box.pack(fill = tk.BOTH, expand = True, padx = 15, pady = 10)
+        self.selecting_traversal_box.grid(row = 1, column = 0, sticky = tk.NSEW, padx = 15, pady = 5)
 
         self.displaying_selected_node_info = ttk.LabelFrame(self.button_frame, text = "Selected Node:")
-        self.displaying_selected_node_info.pack(fill = tk.BOTH, expand = True, padx = 15, pady = 10)
+        self.displaying_selected_node_info.grid(row = 2, column = 0, sticky = tk.NSEW, padx = 15, pady = (5, 10))
 
         self.control_buttons()
 
@@ -99,18 +108,18 @@ class BinaryTreeApp:
         self.warning_timer = None
 
         self.traversals_label = ttk.Label(self.selecting_traversal_box, text = "Traversals", font = ("Segoe UI", 11))
-        self.traversals_label.pack(pady = (5, 0))
+        self.traversals_label.grid(row = 0, column = 0, sticky = tk.EW, pady = (5, 0))
         self.preorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Preorder", command = lambda: self.traversals("Preorder"), style = "Preorder.TButton")
-        self.preorder_traversal.pack(padx = 5, pady = 5)
+        self.preorder_traversal.grid(row = 1, column = 0, sticky = tk.EW, padx = 5, pady = 5)
         self.inorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Inorder", command = lambda: self.traversals("Inorder"), style = "Inorder.TButton")
-        self.inorder_traversal.pack(padx = 5, pady = 5)
+        self.inorder_traversal.grid(row = 2, column = 0, sticky = tk.EW, padx = 5, pady = 5)
         self.postorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Postorder", command = lambda: self.traversals("Postorder"), style = "Postorder.TButton")
-        self.postorder_traversal.pack(padx = 5, pady = 5) 
+        self.postorder_traversal.grid(row = 3, column = 0, sticky = tk.EW, padx = 5, pady = 5) 
 
-        self.node_detail_title_label = ttk.Label(self.displaying_selected_node_info, text = "Node Info", font = ("Segoe", 11))
-        self.node_detail_title_label.pack(pady = (10, 5))
-        self.node_detail_label = tk.Label(self.displaying_selected_node_info, fg = "red", width = 20, height = 20, font = ("Segoe", 12), relief = tk.SUNKEN)
-        self.node_detail_label.pack(padx = 5, pady  = (5, 10))
+        self.node_detail_title_label = ttk.Label(self.displaying_selected_node_info, text = "Node Info", font = ("Segoe", 11), justify = "center")
+        self.node_detail_title_label.grid(row = 0, column = 0, rowspan = 2, sticky = tk.NSEW, pady = (10, 5))
+        self.node_detail_label = ttk.Label(self.displaying_selected_node_info, font = ("Segoe", 12))
+        self.node_detail_label.grid(padx = 5, pady  = (5, 10))
 
     # Draws Binary Tree on Canvas based on user input
     def draw_tree(self):
@@ -289,7 +298,7 @@ class BinaryTreeApp:
 
         for level_nodes in node_positions:
             for node_x, node_y in level_nodes:
-                user_entry = tk.Entry(self.binary_tree_canvas, width = 2, justify = "center")
+                user_entry = ttk.Entry(self.binary_tree_canvas, width = 2, justify = "center")
                 self.binary_tree_canvas.create_window(node_x, node_y, window = user_entry)
                 self.node_user_input.append(user_entry)
 
