@@ -28,6 +28,7 @@ class BinaryTreeApp:
 
         self.root.grid_rowconfigure(0, weight = 1)
         self.root.grid_rowconfigure(1, weight = 0)
+        self.root.grid_rowconfigure(2, weight = 0)
         self.root.grid_columnconfigure(0, weight = 1)
 
 #------------------- Customizations -------------------#
@@ -46,19 +47,20 @@ class BinaryTreeApp:
 
 #------------------- Main Frame -------------------#
         self.main_frame = ttk.Frame(self.root)
-        self.main_frame.grid(row = 0, column = 0, sticky = tk.NSEW, padx = 10, pady = 10)
+        self.main_frame.grid(row = 0, column = 0, sticky = tk.NSEW, padx = 10)
         self.main_frame.grid_rowconfigure(0, weight = 1)
         self.main_frame.grid_columnconfigure(0, weight = 1)
         self.main_frame.grid_columnconfigure(1, weight = 0)
 
 #------------------- Canvas for Binary Tree Visualization -------------------#
         self.binary_tree_canvas = tk.Canvas(self.main_frame, bg = "white", borderwidth = 2, relief = tk.RIDGE)
+        self.binary_tree_canvas.configure(width = 900, height = 600)
         self.binary_tree_canvas.grid(row = 0, column = 0, sticky = tk.NSEW, padx = (0, 5))
 
 #------------------- Control Buttons Frame -------------------#
         self.button_frame = ttk.Frame(self.main_frame)
         self.button_frame.config(width = 320)
-        self.button_frame.grid(row = 0, column = 1, sticky = tk.NS, padx = (5, 0))
+        self.button_frame.grid(row = 0, column = 1, sticky = tk.NSEW, padx = (5, 0))
         self.button_frame.grid_propagate(0)
 
         for row in range(3):
@@ -84,11 +86,15 @@ class BinaryTreeApp:
         self.control_buttons()
 
 #------------------- Traversal Result Frame -------------------#
+        self.top_separating_line = ttk.Separator(self.root, orient = "horizontal")
+        self.top_separating_line.grid(row = 1, column = 0, sticky = tk.EW, padx = 10, pady = (6, 4))
+
         self.traversal_result_frame = ttk.Frame(self.root)
-        self.traversal_result_frame.grid(row = 1, column = 0, sticky = tk.EW, padx = 10, pady = (0, 10))
+        self.traversal_result_frame.configure(height = 160)
+        self.traversal_result_frame.grid(row = 2, column = 0, sticky = tk.EW, padx = 10, pady = (0, 10))
         self.traversal_result_frame.grid_propagate(0)
 
-        self.traversal_title_label = ttk.Label(self.traversal_result_frame, text = "Traversal Result:", font = ("Segoe UI", 14), anchor = "center", justify = "center")
+        self.traversal_title_label = ttk.Label(self.traversal_result_frame, text = "Traversal Result", font = ("Segoe UI", 14), anchor = "center", justify = "center")
         self.traversal_title_label.pack(pady = (5, 0), fill = tk.X)
         self.traversal_warning_label = ttk.Label(self.traversal_result_frame, text = "\n", foreground = "red", anchor = "center", justify = "center")
         self.traversal_warning_label.pack(pady = (0, 5), fill = tk.X)
@@ -105,12 +111,11 @@ class BinaryTreeApp:
         self.level_entry = ttk.Spinbox(self.selecting_level_box, from_= 1, to = 5, state = "readonly", width = 20, justify = "center")
         self.level_entry.pack(pady = (5, 5))
 
-        self.draw_tree_button = ttk.Button(self.selecting_level_box, text = "Draw Tree", command = self.draw_tree, style = "DrawTree.TButton")
+        self.draw_tree_button = ttk.Button(self.selecting_level_box, text = "Draw Tree", width = 20, command = self.draw_tree, style = "DrawTree.TButton")
         self.draw_tree_button.pack(padx = 5, pady = 5)
 
         self.warning_label = ttk.Label(self.selecting_level_box, text = "", foreground = "red")
         self.warning_label.pack(pady = 1)
-        self.warning_timer = None
 
         # Select traversal method tab
         self.traversals_label = ttk.Label(self.selecting_traversal_box, text = "Traversals", font = ("Segoe UI", 11))
@@ -153,6 +158,7 @@ class BinaryTreeApp:
         self.show_value.clear()
         self.traversal_result_label.config(text = "")
         self.traversal_method_label.config(text = "")
+        self.traversal_warning_label.config(text = "\n")
         
         levels = int(self.level_entry.get())
 
@@ -178,12 +184,6 @@ class BinaryTreeApp:
         canvas_width = self.binary_tree_canvas.winfo_width()
         canvas_height = self.binary_tree_canvas.winfo_height()
 
-        if canvas_width < 200:
-            canvas_width = 1200
-        
-        if canvas_height < 200:
-            canvas_height = 600
-
         node_radius = 20
         top_margin = 50
         vertical_spacing = max(60, min(100, (canvas_height - (top_margin + 40)) // max(1, levels))) 
@@ -191,7 +191,7 @@ class BinaryTreeApp:
         node_positions = [] # To store positions of nodes for drawing connections
 
         # Draw nodes level by level
-        for level in range(int(levels)):
+        for level in range(levels):
             node_count = 2 ** level
             vertical_position = top_margin + level * vertical_spacing
             level_node_positions = []
@@ -274,6 +274,12 @@ class BinaryTreeApp:
 
 #------------------- displays the information about the clicked node -------------------#
     def show_node_details(self, index):
+        if self.current_color:
+            info_color = self.current_color
+
+        else:
+            info_color = "black"
+
         if self.node_highlighter is not None and self.current_values:
             values = self.current_values
 
@@ -323,22 +329,22 @@ class BinaryTreeApp:
             parent_text = "N/A"
 
         if index == 0:
-            self.node_info_index_val.config(text = "Root", foreground = self.current_color)
-            self.node_info_parent_val.config(text = "None", foreground = self.current_color)
+            self.node_info_index_val.config(text = "Root", foreground = self.info_color)
+            self.node_info_parent_val.config(text = "None", foreground = self.info_color)
 
         else: 
-            self.node_info_index_val.config(text = str(index + 1), foreground = self.current_color)
-            self.node_info_parent_val.config(text = parent_text, foreground = self.current_color)
+            self.node_info_index_val.config(text = str(index + 1), foreground = self.info_color)
+            self.node_info_parent_val.config(text = parent_text, foreground = self.info_color)
 
         if node_value is None:
-            self.node_info_value_val.config(text = "N/A", foreground = self.current_color)
-            self.node_info_left_chld_val.config(text = "N/A", foreground = self.current_color)
-            self.node_info_right_chld_val.config(text = "N/A", foreground = self.current_color)
+            self.node_info_value_val.config(text = "N/A", foreground = self.info_color)
+            self.node_info_left_chld_val.config(text = "N/A", foreground = self.info_color)
+            self.node_info_right_chld_val.config(text = "N/A", foreground = self.info_color)
 
         else:
-            self.node_info_value_val.config(text = node_value, foreground = self.current_color)
-            self.node_info_left_chld_val.config(text = child_value(left_child_index), foreground = self.current_color)
-            self.node_info_right_chld_val.config(text = child_value(right_child_index), foreground = self.current_color)
+            self.node_info_value_val.config(text = node_value, foreground = self.info_color)
+            self.node_info_left_chld_val.config(text = child_value(left_child_index), foreground = self.info_color)
+            self.node_info_right_chld_val.config(text = child_value(right_child_index), foreground = self.info_color)
 
 #------------------- This will make a text box where users can enter their input on each node -------------------#
     def create_node_user_input(self, node_positions):
@@ -494,10 +500,10 @@ class BinaryTreeApp:
         else:
             self.show_value.append(get_value)
 
-        self.binary_tree_canvas.itemconfig(self.node_circles[result_index], fill = self.current_color)
+        self.binary_tree_canvas.itemconfig(self.node_circles[result_index], fill = self.info_color)
         self.binary_tree_canvas.itemconfig(self.node_texts[result_index], fill = "white")
         self.node_highlighter = self.root.after(delay, lambda: self.node_animation(order, step + 1, delay))
-        self.traversal_result_label.config(text = " ".join(self.show_value), foreground = self.current_color)
+        self.traversal_result_label.config(text = " ".join(self.show_value), foreground = self.info_color)
 
 #------------------- Color Resetter -------------------#
     def node_color_reset(self):
@@ -561,11 +567,11 @@ class BinaryTreeApp:
             self.root.after_cancel(self.node_highlighter)
             self.node_highlighter = None
 
-        self.current_color = font_color
+        self.info_color = font_color
         self.current_method = method
 
-        self.traversal_result_label.config(text = "", foreground = self.current_color)
-        self.traversal_method_label.config(text = self.current_method, foreground = self.current_color)
+        self.traversal_result_label.config(text = "", foreground = self.info_color)
+        self.traversal_method_label.config(text = self.current_method, foreground = self.info_color)
 
         self.node_animation(result)
 
