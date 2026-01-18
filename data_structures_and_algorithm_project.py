@@ -559,7 +559,7 @@ class BinaryTreeApp:
                 entry.configure(style = "TEntry")
                 value = entry.get().strip()
                 self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "yellow")
-                self.binary_tree_canvas.itemconfig(self.node_texts[index], text = "" if value in ("", "?") else value)
+                self.binary_tree_canvas.itemconfig(self.node_texts[index], text = "" if value == "" else value)
         
 #------------------- Preorder Traversal -------------------#
     def preorder(self, values):
@@ -687,12 +687,12 @@ class BinaryTreeApp:
             self.show_value.clear()
             self.traversal_result_label.config(text = "")
 
-        values = self.get_node_entries()
+        values = self.get_node_entries(warning = False)
 
         if values is None:
             return
         
-        values = self.off_nodes(values)
+        values = self.off_nodes(values, re_highlight = False)
 
         self.current_values = values
         self.show_value.clear()
