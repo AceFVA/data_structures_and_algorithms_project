@@ -25,6 +25,7 @@ class BinaryTreeApp:
         self.show_value = []
         self.node_texts = []
         self.clicked_circle = None
+        self.info_color = "black"
 
         self.root.grid_rowconfigure(0, weight = 1)
         self.root.grid_rowconfigure(1, weight = 0)
@@ -39,11 +40,11 @@ class BinaryTreeApp:
         style.map("DrawTree.TButton", background = [("active", "dark green")])
 
         style.configure("Preorder.TButton", foreground = "white", background = "blue")
-        style.map("Preorder.TButton", background = [("active", "green")])
+        style.map("Preorder.TButton", background = [("active", "lime")])
         style.configure("Inorder.TButton", foreground = "white", background = "orange")
-        style.map("Inorder.TButton", background = [("active", "green")])
+        style.map("Inorder.TButton", background = [("active", "lime")])
         style.configure("Postorder.TButton", foreground = "white", background = "purple")
-        style.map("Postorder.TButton", background = [("active", "green")])
+        style.map("Postorder.TButton", background = [("active", "lime")])
         style.configure("Instructions.TButton", font = ("Segoe", 9, "underline"), relief = "flat", foreground = "blue")
 
 #------------------- Main Frame -------------------#
@@ -175,6 +176,11 @@ class BinaryTreeApp:
         self.postorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Postorder", command = lambda: self.traversals("Postorder"), style = "Postorder.TButton")
         self.postorder_traversal.grid(row = 3, column = 0, sticky = tk.EW, padx = 20, pady = 5) 
 
+        # disable the buttons first
+        self.preorder_traversal.state(["disabled"])
+        self.inorder_traversal.state(["disabled"])
+        self.postorder_traversal.state(["disabled"])
+
         # Selected Info tab
         # Column 0
         self.node_info_title = ttk.Label(self.displaying_selected_node_info, text = "Node Information", font = ("Segoe", 11)).grid(row = 0, column = 0, columnspan = 2, sticky = tk.NS, pady=(5, 5))
@@ -284,6 +290,10 @@ class BinaryTreeApp:
 
         self.draw_tree_button.config(text = "Reset", command = self.reset_tree)
 
+        self.preorder_traversal.state(["!disabled"])
+        self.inorder_traversal.state(["!disabled"])
+        self.postorder_traversal.state(["!disabled"])
+
 #------------------- Lets the user have a choice to reset the tree after creating one -------------------#
     def reset_tree(self):
         self.binary_tree_canvas.delete("all")
@@ -307,7 +317,7 @@ class BinaryTreeApp:
 
         if self.traversal_warning_timer is not None:
             self.root.after_cancel(self.traversal_warning_timer)
-            self.root.warning_timer = None
+            self.traversal_warning_timer = None
 
         self.traversal_warning_label.config(text = "\n")
 
@@ -318,6 +328,10 @@ class BinaryTreeApp:
         self.warning_label.config(text = "")
 
         self.draw_tree_button.config(text = "Draw Tree", command = self.draw_tree)
+
+        self.preorder_traversal.state(["disabled"])
+        self.inorder_traversal.state(["disabled"])
+        self.postorder_traversal.state(["disabled"])
 
 #------------------- Resizing Tree when window size changes -------------------#
     def on_tree_resize(self, event):
@@ -587,14 +601,6 @@ class BinaryTreeApp:
         if self.traversal_warning_timer is not None:
             self.root.after_cancel(self.traversal_warning_timer)
             self.traversal_warning_timer = None
-
-        if not self.node_user_input:
-            self.traversal_warning_label.config(text = "Draw the Binary Tree first.\n")
-            self.traversal_warning_timer = self.root.after(1000, lambda: self.traversal_warning_label.config(text = "\n"))
-            self.traversal_result_label.config(text = "")
-            self.traversal_method_label.config(text = "")
-
-            return
 
         if self.node_highlighter is not None:
             self.root.after_cancel(self.node_highlighter)
