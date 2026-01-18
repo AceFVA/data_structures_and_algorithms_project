@@ -39,11 +39,11 @@ class BinaryTreeApp:
         style.map("DrawTree.TButton", background = [("active", "dark green")])
 
         style.configure("Preorder.TButton", foreground = "white", background = "blue")
-        style.map("Preorder.TButton", background = [("active", "dark blue")])
+        style.map("Preorder.TButton", background = [("active", "green")])
         style.configure("Inorder.TButton", foreground = "white", background = "orange")
-        style.map("Inorder.TButton", background = [("active", "dark orange")])
-        style.configure("Postorder.TButton", foreground = "white", background = "violet")
-        style.map("Postorder.TButton", background = [("active", "purple")])
+        style.map("Inorder.TButton", background = [("active", "green")])
+        style.configure("Postorder.TButton", foreground = "white", background = "purple")
+        style.map("Postorder.TButton", background = [("active", "green")])
 
 #------------------- Main Frame -------------------#
         self.main_frame = ttk.Frame(self.root)
@@ -56,6 +56,10 @@ class BinaryTreeApp:
         self.binary_tree_canvas = tk.Canvas(self.main_frame, bg = "white", borderwidth = 2, relief = tk.RIDGE)
         self.binary_tree_canvas.configure(width = 900, height = 600)
         self.binary_tree_canvas.grid(row = 0, column = 0, sticky = tk.NSEW, padx = (0, 5))
+
+        # For adjusting window size
+        self.levels = 0
+        self.binary_tree_canvas.bind("<Configure>", self.on_tree_resize)
 
 #------------------- Control Buttons Frame -------------------#
         self.button_frame = ttk.Frame(self.main_frame)
@@ -121,11 +125,11 @@ class BinaryTreeApp:
         self.traversals_label = ttk.Label(self.selecting_traversal_box, text = "Traversals", font = ("Segoe UI", 11))
         self.traversals_label.grid(row = 0, column = 0, sticky = tk.NS, pady = (5, 20))
         self.preorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Preorder", command = lambda: self.traversals("Preorder"), style = "Preorder.TButton")
-        self.preorder_traversal.grid(row = 1, column = 0, sticky = tk.EW, padx = 5, pady = 5)
+        self.preorder_traversal.grid(row = 1, column = 0, sticky = tk.EW, padx = 20, pady = 5)
         self.inorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Inorder", command = lambda: self.traversals("Inorder"), style = "Inorder.TButton")
-        self.inorder_traversal.grid(row = 2, column = 0, sticky = tk.EW, padx = 5, pady = 5)
+        self.inorder_traversal.grid(row = 2, column = 0, sticky = tk.EW, padx = 20, pady = 5)
         self.postorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Postorder", command = lambda: self.traversals("Postorder"), style = "Postorder.TButton")
-        self.postorder_traversal.grid(row = 3, column = 0, sticky = tk.EW, padx = 5, pady = 5) 
+        self.postorder_traversal.grid(row = 3, column = 0, sticky = tk.EW, padx = 20, pady = 5) 
 
         # Selected Info tab
         # Column 0
@@ -161,6 +165,7 @@ class BinaryTreeApp:
         self.traversal_warning_label.config(text = "\n")
         
         levels = int(self.level_entry.get())
+        self.levels = levels
 
         # Reset timers
         if self.node_highlighter is not None:
@@ -185,7 +190,7 @@ class BinaryTreeApp:
         canvas_height = self.binary_tree_canvas.winfo_height()
 
         node_radius = 20
-        top_margin = 50
+        top_margin = max(50, canvas_height // (levels + 1) // 2)
         vertical_spacing = max(60, min(100, (canvas_height - (top_margin + 40)) // max(1, levels))) 
 
         node_positions = [] # To store positions of nodes for drawing connections
@@ -271,6 +276,12 @@ class BinaryTreeApp:
         self.warning_label.config(text = "")
 
         self.draw_tree_button.config(text = "Draw Tree", command = self.draw_tree)
+
+#------------------- Resizing Tree when window size changes -------------------#
+    def on_tree_resize(self, event):
+        # Checck if the tree exists first
+        if self.levels > 0 and self.node_user_input:
+            self.draw_tree()  
 
 #------------------- displays the information about the clicked node -------------------#
     def show_node_details(self, index):
