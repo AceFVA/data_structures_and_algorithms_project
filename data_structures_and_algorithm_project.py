@@ -325,7 +325,10 @@ class BinaryTreeApp:
         if not self.node_user_input:
             return
         
-        values = [entry.get() for entry in self.node_user_input]
+        values = []
+        for entry in self.node_user_input:
+            values.append(entry.get())
+
         self.draw_tree()
         
         for entry, value in zip(self.node_user_input, values):
