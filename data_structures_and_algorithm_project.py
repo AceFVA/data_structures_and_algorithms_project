@@ -63,9 +63,11 @@ class BinaryTreeApp:
         self.levels = 0
         self.binary_tree_canvas.bind("<Configure>", self.on_tree_resize)
 
-        # Instructions
+        # for Instructions display
         self.app_instructions = ttk.Button(self.binary_tree_canvas, text = "Help?", width = 5, style = "Instructions.TButton", command = self.show_instructions)
         self.instructions_id = self.binary_tree_canvas.create_window(0, 0, window = self.app_instructions, anchor = tk.SE)
+        self.root.update_idletasks()
+        self.binary_tree_canvas.coords(self.instructions_id, self.binary_tree_canvas.winfo_width() - 10, self.binary_tree_canvas.winfo_height() -10)
 
 #------------------- Control Buttons Frame -------------------#
         self.button_frame = ttk.Frame(self.main_frame)
@@ -157,7 +159,7 @@ class BinaryTreeApp:
             font = ("Segoe", 10)
         ).pack(padx = 20, pady = 10, anchor = tk.W)
 
-        tk.Button(window, text = "Okay", command = window.destroy).pack(pady = 10)
+        tk.Button(window, text = "Okay", command = lambda: (window.destroy(), setattr(self, "instruction_window", None))).pack(pady = 10)
         window.protocol("WM_DELETE_WINDOW", lambda: setattr(self, "instruction_window", None))
 
 #------------------- Control Buttons -------------------#
@@ -264,7 +266,7 @@ class BinaryTreeApp:
                 node_circle = self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow", outline = "black", width = 2,tags = ("tree", "node"))
                 self.node_circles.append(node_circle)
 
-                node_text = self.binary_tree_canvas.create_text(horizontal_position, vertical_position, text = "", font = ("Segoe UI", 10, "bold"), tags = ("tree"))
+                node_text = self.binary_tree_canvas.create_text(horizontal_position, vertical_position, text = "", font = ("Segoe UI", 10, "bold"), tags = ("tree",))
                 self.node_texts.append(node_text)
 
                 index = len(self.node_circles) - 1
