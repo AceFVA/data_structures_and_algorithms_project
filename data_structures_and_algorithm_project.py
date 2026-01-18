@@ -224,9 +224,6 @@ class BinaryTreeApp:
         self.traversal_result_label.config(text = "")
         self.traversal_method_label.config(text = "")
         self.traversal_warning_label.config(text = "\n")
-        
-        levels = int(self.level_entry.get())
-        self.levels = levels
 
         # Reset timers
         if self.node_highlighter is not None:
@@ -316,7 +313,7 @@ class BinaryTreeApp:
         node_positions = self.tree_visual_build(levels)
         self.create_node_user_input(node_positions)
 
-        self.tree_visual_after_drawn
+        self.tree_visual_after_drawn()
 
 #------------------- Lets the user have a choice to reset the tree after creating one -------------------#
     def reset_tree(self):
@@ -385,7 +382,7 @@ class BinaryTreeApp:
             entry.delete(0, tk.END)
             entry.insert(0, value)
 
-        self.update_off_nodes()
+        self.update_disabled_nodes()
 
 #------------------- displays the information about the clicked node -------------------#
     def show_node_details(self, index):
@@ -405,7 +402,7 @@ class BinaryTreeApp:
             if not self.node_user_input:
                 return
         
-            values = self.get_right_values(warning = False)
+            values = self.get_forced_off_values(warning = False)
             if values is None:
                 return
             
@@ -474,7 +471,7 @@ class BinaryTreeApp:
             for node_x, node_y in level_nodes:
                 user_entry = ttk.Entry(self.binary_tree_canvas, width = 3, justify = "center")  
                 self.binary_tree_canvas.create_window(node_x, node_y, window = user_entry)
-                user_entry.bind("<KeyRelease>", lambda event: self.update_off_nodes())
+                user_entry.bind("<KeyRelease>", lambda event: self.update_disabled_nodes())
                 self.node_user_input.append(user_entry)
 
 #------------------- Gets the inputs in each node -------------------#
@@ -482,10 +479,6 @@ class BinaryTreeApp:
         values = []
 
         for index, entry in enumerate(self.node_user_input):
-            if self.node_forced_off and index < len(self.node_forced_off) and self.node_forced_off[index]:
-                values.append(None)
-                continue
-
             value = entry.get().strip()
 
             if value == "?":
@@ -495,20 +488,26 @@ class BinaryTreeApp:
             if value == "":
                 if warning:
                     self.warning_label.config(text = "Missing node value. Please input any\nvalue first or '?' if its an empty node.")
+
+                    if self.tree_warning_timer is not None:
+                        self.root.after_cancel(self.tree_warning_timer)
+
                     self.tree_warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
-                    
                     return None
+                
                 values.append("")
                 continue
 
             values.append(value)
 
         return values
-    
+
 #------------------- This will gray out the nodes under a node with a "?" entried by the user -------------------#
-    def get_right_values(self, warning = False):
+    def get_forced_off_values(self, warning = False):
+        self.update_disabled_nodes()
+
         # this returns node values where '?' is treated as None and any descendants of it is also None 
-        values = self.get_node_entries(warning = warning)
+        values = self.get_node_entries(warning = False)
         if values is None:
             return None
         
@@ -516,9 +515,21 @@ class BinaryTreeApp:
             if self.node_forced_off and index < len(self.node_forced_off) and self.node_forced_off[index]:
                 values[index] = None
 
+        if warning:
+            for value in values:
+                if value == "":
+                    self.warning_label.config(text = "Missing node value. Please input any\nvalue first or '?' if its an empty node.")
+                    
+                    if self.tree_warning_timer is not None:
+                        self.root.after_cancel(self.tree_warning_timer)
+                        self.tree_warning_timer = None
+                        
+                    self.tree_warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
+                    return None
+                
         return values
 
-    def update_off_nodes(self):
+    def update_disabled_nodes(self):
         num = len(self.node_user_input)
         forced = [False] * num
         qmarked_node = [False] * num # question marked nodes
@@ -696,7 +707,8 @@ class BinaryTreeApp:
             self.show_value.clear()
             self.traversal_result_label.config(text = "")
 
-        values = self.get_right_values(warning = False)
+        values = self.get_forced_off_values(warning = True)
+
         if values is None:
             return
             
