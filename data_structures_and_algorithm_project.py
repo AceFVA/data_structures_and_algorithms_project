@@ -26,6 +26,7 @@ class BinaryTreeApp:
         self.node_texts = []
         self.clicked_circle = None
         self.info_color = "black"
+        self.node_forced_off = []
 
         self.root.grid_rowconfigure(0, weight = 1)
         self.root.grid_rowconfigure(1, weight = 0)
@@ -46,6 +47,7 @@ class BinaryTreeApp:
         style.configure("Postorder.TButton", foreground = "white", background = "purple")
         style.map("Postorder.TButton", background = [("active", "lime")])
         style.configure("Instructions.TButton", font = ("Segoe", 9, "underline"), relief = "flat", foreground = "blue", background = "white")
+        style.configure("OffedNode.TEntry", fieldbackground = "lightgray", foreground = "gray")
 
 #------------------- Main Frame -------------------#
         self.main_frame = ttk.Frame(self.root)
@@ -360,11 +362,14 @@ class BinaryTreeApp:
 
 #------------------- displays the information about the clicked node -------------------#
     def show_node_details(self, index):
+        if self.node_forced_off and index < len(self.node_forced_off) and  self.node_forced_off[index]:
+            return
+
         if self.current_color:
-            info_color = self.current_color
+            self.info_color = self.current_color
 
         else:
-            info_color = "black"
+            self.info_color = "black"
 
         if self.node_highlighter is not None and self.current_values:
             values = self.current_values
@@ -373,7 +378,7 @@ class BinaryTreeApp:
             if not self.node_user_input:
                 return
         
-            values = self.get_node_entries()
+            values = self.get_node_entries(warning = False)
             if values is None:
                 return
         
@@ -390,14 +395,14 @@ class BinaryTreeApp:
         
         def child_value(index):
             if 0 <= index < len(values):
-                if values[index] is not None:
-                    return values[index]
+                if values[index] is None:
+                    return "Empty"
                 
-                else:
-                    return "None"
-            
-            else:
-                return "N/A"
+                if values[index] == "":
+                    return "Empty"
+                
+                return values[index]
+            return "N/A"
 
         if index != 0:
             parent_index = (index - 1) // 2
@@ -422,10 +427,10 @@ class BinaryTreeApp:
             self.node_info_index_val.config(text = str(index + 1), foreground = self.info_color)
             self.node_info_parent_val.config(text = parent_text, foreground = self.info_color)
 
-        if node_value is None:
-            self.node_info_value_val.config(text = "N/A", foreground = self.info_color)
-            self.node_info_left_chld_val.config(text = "N/A", foreground = self.info_color)
-            self.node_info_right_chld_val.config(text = "N/A", foreground = self.info_color)
+        if node_value is None or node_value == "":
+            self.node_info_value_val.config(text = "Empty", foreground = self.info_color)
+            self.node_info_left_chld_val.config(text = child_value(left_child_index), foreground = self.info_color)
+            self.node_info_right_chld_val.config(text = child_value(right_child_index), foreground = self.info_color)
 
         else:
             self.node_info_value_val.config(text = node_value, foreground = self.info_color)
@@ -441,30 +446,36 @@ class BinaryTreeApp:
 
         for level_nodes in node_positions:
             for node_x, node_y in level_nodes:
-                user_entry = ttk.Entry(self.binary_tree_canvas, width = 2, justify = "center")
+                user_entry = ttk.Entry(self.binary_tree_canvas, width = 3, justify = "center")  
                 self.binary_tree_canvas.create_window(node_x, node_y, window = user_entry)
+                user_entry.bind("<KeyRelease>", lambda event: self.update_off_nodes())
                 self.node_user_input.append(user_entry)
 
 #------------------- Gets the inputs in each node -------------------#
-    def get_node_entries(self):
+    def get_node_entries(self, warning = True):
         values = []
-        for entry in self.node_user_input:
+
+        for index, entry in enumerate(self.node_user_input):
+            if self.node_forced_off and index < len(self.node_forced_off) and self.node_forced_off[index]:
+                values.append(None)
+                continue
+
             value = entry.get().strip()
 
-            try:
-                if value == "":
-                    raise ValueError
-                
-            except ValueError:
-                self.warning_label.config(text = "Missing node value. Please input any\nvalue first or '?' if its an empty node.")
-                self.tree_warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
-                return
-
-            if value != "?":
-                values.append(value)
-
-            else:
+            if value == "?":
                 values.append(None)
+                continue
+
+            if value == "":
+                if warning:
+                    self.warning_label.config(text = "Missing node value. Please input any\nvalue first or '?' if its an empty node.")
+                    self.tree_warning_timer = self.root.after(3000, lambda: self.warning_label.config(text = ""))
+                    
+                    return None
+                values.append("")
+                continue
+
+            values.append(values)
 
         return values
     
@@ -487,12 +498,69 @@ class BinaryTreeApp:
                     self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "lightgray")
                     self.binary_tree_canvas.itemconfig(self.node_texts[index], text = "")
 
+                    self.node_user_input[index].delete(0, tk.END)
+                    self.node_user_input[index].state(["disabled"])
+
                 else: 
                     self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "yellow")
                     self.binary_tree_canvas.itemconfig(self.node_texts[index], text = value)
+
+                    self.node_user_input[index].state(["!disabled"])
         
         return values
     
+    def update_off_nodes(self):
+        num = len(self.node_user_input)
+        forced = [False] * num
+        qmarked_node = [False] * num # question marked nodes
+
+        for index, entry in enumerate(self.node_user_input):
+            if entry.get().strip() == "?":
+                qmarked_node[index] = True
+
+        stack = []
+        for index, is_qmarked in enumerate(qmarked_node):
+            if is_qmarked:
+                for child in (2 * index + 1, 2 * index + 2):
+                    if child < num and not forced[child]:
+                        forced[child] = True
+                        stack.append(child)
+
+        while stack:
+            index = stack.pop()
+            for child in (2 * index + 1, 2 * index + 2):
+                if child < num and not forced[child]:
+                    forced[child] = True
+                    stack.append(child)
+
+        self.node_forced_off = forced
+
+        # Updating entry nodes based on conditions:
+        for index in range(num):
+            entry = self.node_user_input[index]
+
+            # if node is "?", grayed but editable for reactivating the nodes
+            if qmarked_node[index]:
+                entry.state(["!disabled"])
+                entry.configure(style = "OffedNode.TEntry")
+                self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "lightgray")
+                self.binary_tree_canvas.itemconfig(self.node_texts[index], text = "?")
+
+            # if its a descendant of the "?" node, grayed and disabled
+            elif forced[index]:
+                entry.delete(0, tk.END)
+                entry.state(["disabled"])
+                entry.configure(style = "OffedNode.TEntry")
+                self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "lightgray")
+                self.binary_tree_canvas.itemconfig(self.node_texts[index], text = "?")
+
+            else:
+                entry.state(["!disabled"])
+                entry.configure(style = "TEntry")
+                value = entry.get().strip()
+                self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "yellow")
+                self.binary_tree_canvas.itemconfig(self.node_texts[index], text = "" if value in ("", "?") else value)
+        
 #------------------- Preorder Traversal -------------------#
     def preorder(self, values):
         if not values:
