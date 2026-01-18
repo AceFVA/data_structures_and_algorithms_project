@@ -118,7 +118,12 @@ class BinaryTreeApp:
 #------------------- Instructions -------------------#
     # Shows the instructions when the user clicked the button
     def show_instructions(self):
-        window = tk.Toplevel(self.root)
+        if hasattr(self, "instruction_window") and self.instruction_window.winfo_exists():
+            self.instruction_window.lift()
+            return
+
+        self.instruction_window = tk.Toplevel(self.root)
+        window = self.instruction_window
         window.title("How to use?")
         window.geometry("425x350")
         window.resizable(False, False)
@@ -153,6 +158,7 @@ class BinaryTreeApp:
         ).pack(padx = 20, pady = 10, anchor = tk.W)
 
         tk.Button(window, text = "Okay", command = window.destroy).pack(pady = 10)
+        window.protocol("WM_DELETE_WINDOW", lambda: setattr(self, "instruction_window", None))
 
 #------------------- Control Buttons -------------------#
     def control_buttons(self):
