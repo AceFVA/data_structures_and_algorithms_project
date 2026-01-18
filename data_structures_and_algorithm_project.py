@@ -55,7 +55,7 @@ class BinaryTreeApp:
 
 #------------------- Instructions -------------------#
         self.app_instructions = ttk.Button(self.main_frame, text = "How to use?", style = "Instructions.TButton", command = self.show_instructions)
-        self.app_instructions.grid(row = 1, column = 0, sticky = tk.E, padx = 10, pady = 5)
+        self.app_instructions.grid(row = 1, column = 0, sticky = tk.NE, padx = 10, pady = 5)
 
 #------------------- Canvas for Binary Tree Visualization -------------------#
         self.binary_tree_canvas = tk.Canvas(self.main_frame, bg = "white", borderwidth = 2, relief = tk.RIDGE)
@@ -111,43 +111,49 @@ class BinaryTreeApp:
         self.traversal_result_label = ttk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 28), anchor = "center", justify = "center")
         self.traversal_result_label.pack(pady = 5)
 
-        self.traversal_method_label = ttk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 9), anchor = "center", justify = "center")
+        self.traversal_method_label = ttk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 12), anchor = "center", justify = "center")
         self.traversal_method_label.pack(pady = 5)
 
-#------------------- Control Buttons -------------------#
+#------------------- Instructions -------------------#
+    # Shows the instructions when the user clicked the button
     def show_instructions(self):
         window = tk.Toplevel(self.root)
         window.title("How to use?")
-        window.geometry("400x350")
+        window.geometry("425x350")
         window.resizable(False, False)
 
-        tk.Label(window, text = "INSTRUCTIONS", font = ("Segoe", 11)).pack(pady = (20, 0))
+        tk.Label(window, text = "Instructions", font = ("Segoe", 11)).pack(pady = (20, 0))
         tk.Label(
             window, 
             text = (
-                "1. Select your desired level of Binary Tree.\n"
-                "2. Click 'Draw Tree' button to display the Binary Tree template.\n"
-                "3. Enter any value you want on each node.\n"
-                "4. Select a traversal method of you want.\n"
-                "5. You can select any node to display its information.\n"                    
-                "6. Wait for the traversal result and you're done!\n"
+                "1.  Select your desired level of Binary Tree.\n"
+                "2.  Click 'Draw Tree' button to display the Binary Tree template.\n"
+                "3.  Enter any value you want on each node.\n"
+                "4.  Select a traversal method of you want.\n"
+                "5.  You can select any node to display its information.\n"                    
+                "6.  Wait for the traversal result and you're done!"
             ), 
-            justify = "left"
-        ).pack(padx = 20, pady = 10)
+            justify = "left",
+            font = ("Segoe", 10)
+        ).pack(padx = 20, pady = 10, anchor = tk.W)
 
-        tk.Label(window, text = "REMINDERS", font = ("Segoe", 11)).pack(pady = (5, 0))
+        tk.Label(window, text = "Reminders", font = ("Segoe", 11)).pack(pady = (5, 0))
         tk.Label(
             window,
             text = (
-            "1. The maximum number of level is 5.\n"
-            "2. No node should be empty.\n"
-            "3. Enter '?' on any node that you want to switch off."
+                "1.  The maximum number of level is 5.\n"
+                "2.  Click the 'Reset' button to clear the entries in all nodes.\n"
+                "3.  No node must be empty.\n"
+                "4.  Enter '?' on any node that you want to switch off.\n"
+                "5.  Switched off nodes will not be able to show its details."
             ),
-            justify = "left"
-        ).pack(padx = 20, pady = 10)
+            justify = "left",
+            font = ("Segoe", 10)
+        ).pack(padx = 20, pady = 10, anchor = tk.W)
 
         tk.Button(window, text = "Okay", command = window.destroy).pack(pady = 10)
 
+#------------------- Control Buttons -------------------#
     def control_buttons(self):
         # Select a level tab
         self.level_entry = ttk.Spinbox(self.selecting_level_box, from_= 1, to = 5, state = "readonly", width = 20, justify = "center")
@@ -316,8 +322,14 @@ class BinaryTreeApp:
 #------------------- Resizing Tree when window size changes -------------------#
     def on_tree_resize(self, event):
         # Checck if the tree exists first
-        if self.levels > 0 and self.node_user_input:
-            self.draw_tree()  
+        if not self.node_user_input:
+            return
+        
+        values = [entry.get() for entry in self.node_user_input]
+        self.draw_tree()
+        
+        for entry, value in zip(self.node_user_input, values):
+            entry.insert(0, value)
 
 #------------------- displays the information about the clicked node -------------------#
     def show_node_details(self, index):
@@ -528,7 +540,7 @@ class BinaryTreeApp:
         return pop_out
     
 #------------------- creates an animation when traversing -------------------#
-    def node_animation(self, order, step = 0, delay = 500):
+    def node_animation(self, order, step = 0, delay = 300):
         if step >= len(order):
             self.node_highlighter = None
             self.node_color_reset()
