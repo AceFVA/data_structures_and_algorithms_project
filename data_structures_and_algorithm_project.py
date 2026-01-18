@@ -45,7 +45,7 @@ class BinaryTreeApp:
         style.map("Inorder.TButton", background = [("active", "lime")])
         style.configure("Postorder.TButton", foreground = "white", background = "purple")
         style.map("Postorder.TButton", background = [("active", "lime")])
-        style.configure("Instructions.TButton", font = ("Segoe", 9, "underline"), relief = "flat", foreground = "blue")
+        style.configure("Instructions.TButton", font = ("Segoe", 9, "underline"), relief = "flat", foreground = "blue", background = "white")
 
 #------------------- Main Frame -------------------#
         self.main_frame = ttk.Frame(self.root)
@@ -53,10 +53,6 @@ class BinaryTreeApp:
         self.main_frame.grid_rowconfigure(0, weight = 1)
         self.main_frame.grid_columnconfigure(0, weight = 1)
         self.main_frame.grid_columnconfigure(1, weight = 0)
-
-#------------------- Instructions -------------------#
-        self.app_instructions = ttk.Button(self.main_frame, text = "How to use?", style = "Instructions.TButton", command = self.show_instructions)
-        self.app_instructions.grid(row = 1, column = 0, sticky = tk.NE, padx = 10, pady = 5)
 
 #------------------- Canvas for Binary Tree Visualization -------------------#
         self.binary_tree_canvas = tk.Canvas(self.main_frame, bg = "white", borderwidth = 2, relief = tk.RIDGE)
@@ -66,6 +62,10 @@ class BinaryTreeApp:
         # For adjusting window size
         self.levels = 0
         self.binary_tree_canvas.bind("<Configure>", self.on_tree_resize)
+
+        # Instructions
+        self.app_instructions = ttk.Button(self.binary_tree_canvas, text = "Help?", width = 5, style = "Instructions.TButton", command = self.show_instructions)
+        self.instructions_id = self.binary_tree_canvas.create_window(0, 0, window = self.app_instructions, anchor = tk.SE)
 
 #------------------- Control Buttons Frame -------------------#
         self.button_frame = ttk.Frame(self.main_frame)
@@ -124,7 +124,7 @@ class BinaryTreeApp:
 
         self.instruction_window = tk.Toplevel(self.root)
         window = self.instruction_window
-        window.title("How to use?")
+        window.title("How To Use")
         window.geometry("425x350")
         window.resizable(False, False)
 
@@ -210,7 +210,7 @@ class BinaryTreeApp:
         
 #------------------- Draws Binary Tree on Canvas based on user input -------------------#
     def draw_tree(self):
-        self.binary_tree_canvas.delete("all")
+        self.binary_tree_canvas.delete("tree")
         self.node_circles.clear()
         self.node_texts.clear()
         self.show_value.clear()
@@ -261,10 +261,10 @@ class BinaryTreeApp:
                 level_node_positions.append((horizontal_position, vertical_position))
 
                 # Drawing circle for node
-                node_circle = self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow", outline = "black", width = 2,tags = ("node",))
+                node_circle = self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow", outline = "black", width = 2,tags = ("tree", "node"))
                 self.node_circles.append(node_circle)
 
-                node_text = self.binary_tree_canvas.create_text(horizontal_position, vertical_position, text = "", font = ("Segoe UI", 10, "bold"))
+                node_text = self.binary_tree_canvas.create_text(horizontal_position, vertical_position, text = "", font = ("Segoe UI", 10, "bold"), tags = ("tree"))
                 self.node_texts.append(node_text)
 
                 index = len(self.node_circles) - 1
@@ -284,11 +284,11 @@ class BinaryTreeApp:
 
                 if left_child < len(children_nodes):
                     children_x, children_y = children_nodes[left_child]
-                    self.binary_tree_canvas.create_line(parent_x, parent_y, children_x, children_y, width = 1, tags = "line")
+                    self.binary_tree_canvas.create_line(parent_x, parent_y, children_x, children_y, width = 1, tags = ("tree", "line"))
 
                 if right_child < len(children_nodes):
                     children_x, children_y = children_nodes[right_child]
-                    self.binary_tree_canvas.create_line(parent_x, parent_y, children_x, children_y, width = 1, tags = "line")
+                    self.binary_tree_canvas.create_line(parent_x, parent_y, children_x, children_y, width = 1, tags = ("tree", "line"))
 
             self.binary_tree_canvas.tag_lower("line")
         
@@ -302,7 +302,7 @@ class BinaryTreeApp:
 
 #------------------- Lets the user have a choice to reset the tree after creating one -------------------#
     def reset_tree(self):
-        self.binary_tree_canvas.delete("all")
+        self.binary_tree_canvas.delete("tree")
 
         for entry in self.node_user_input:
             entry.destroy()
@@ -341,10 +341,12 @@ class BinaryTreeApp:
 
 #------------------- Resizing Tree when window size changes -------------------#
     def on_tree_resize(self, event):
+        self.binary_tree_canvas.coords(self.instructions_id, event.width - 10, event.height - 10)
+
         # Checck if the tree exists first
         if not self.node_user_input:
             return
-        
+
         values = []
         for entry in self.node_user_input:
             values.append(entry.get())
