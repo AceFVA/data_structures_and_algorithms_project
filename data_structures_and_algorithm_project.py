@@ -213,11 +213,13 @@ class BinaryTreeApp:
         self.node_info_right_chld_val.grid(row = 5, column = 1, sticky = tk.W, padx = 10)
         
 #------------------- Draws Binary Tree on Canvas based on user input -------------------#
-    def draw_tree(self):
+    def tree_visual_reset(self):
         self.binary_tree_canvas.delete("tree")
+
         self.node_circles.clear()
         self.node_texts.clear()
         self.show_value.clear()
+
         self.traversal_result_label.config(text = "")
         self.traversal_method_label.config(text = "")
         self.traversal_warning_label.config(text = "\n")
@@ -235,13 +237,14 @@ class BinaryTreeApp:
             self.traversal_warning_timer = None
 
         # Verify if the input is a valid positive integer
-        self.warning_label.config(text = "")
         if self.tree_warning_timer is not None:
             self.root.after_cancel(self.tree_warning_timer)
             self.tree_warning_timer = None
 
+        self.warning_label.config(text = "")
         self.traversal_title_label.config(text = "Traversal Result:", foreground = "black")
-        
+    
+    def tree_visual_build(self, levels: int):
         # Parameters for making the binary tree
         self.root.update_idletasks()
         canvas_width = self.binary_tree_canvas.winfo_width()
@@ -256,19 +259,18 @@ class BinaryTreeApp:
         # Draw nodes level by level
         for level in range(levels):
             node_count = 2 ** level
-            vertical_position = top_margin + level * vertical_spacing
-            level_node_positions = []
+            y_axis = top_margin + level * vertical_spacing
+            level_positions = []
 
             for node in range(node_count):
-                horizontal_spacing = canvas_width / (node_count + 1)
-                horizontal_position = int((node + 1) * horizontal_spacing)
-                level_node_positions.append((horizontal_position, vertical_position))
+                x_axis = int((node + 1) * (canvas_width / (node_count + 1)))
+                level_positions.append((x_axis, y_axis))
 
                 # Drawing circle for node
-                node_circle = self.binary_tree_canvas.create_oval(horizontal_position - node_radius, vertical_position - node_radius, horizontal_position + node_radius, vertical_position + node_radius, fill = "yellow", outline = "black", width = 2,tags = ("tree", "node"))
+                node_circle = self.binary_tree_canvas.create_oval(x_axis - node_radius, y_axis - node_radius, x_axis + node_radius, y_axis + node_radius, fill = "yellow", outline = "black", width = 2,tags = ("tree", "node"))
                 self.node_circles.append(node_circle)
 
-                node_text = self.binary_tree_canvas.create_text(horizontal_position, vertical_position, text = "", font = ("Segoe UI", 10, "bold"), tags = ("tree",))
+                node_text = self.binary_tree_canvas.create_text(x_axis, y_axis, text = "", font = ("Segoe UI", 10, "bold"), tags = ("tree",))
                 self.node_texts.append(node_text)
 
                 index = len(self.node_circles) - 1
@@ -276,33 +278,44 @@ class BinaryTreeApp:
                 self.binary_tree_canvas.tag_bind(node_text, "<Button-1>", lambda event, i = index: self.show_node_details(i))
 
             # Store each node's position separated by its level
-            node_positions.append(level_node_positions)
+            node_positions.append(level_positions)
 
         for level in range(len(node_positions) - 1): # Index: 0, 1, 2, 3 (except 4 since the nodes in this level doesn't have a child)
-            parent_node = node_positions[level] 
-            children_nodes = node_positions[level + 1]
+            parent_n = node_positions[level] 
+            child_n = node_positions[level + 1]
 
-            for parent_index, (parent_x, parent_y) in enumerate(parent_node): # --> 0, (x-axis, y-axis)
-                left_child = 2 * parent_index
-                right_child = 2 * parent_index + 1
+            for parent_i, (parent_x, parent_y) in enumerate(parent_n): # --> 0, (x-axis, y-axis)
+                l_child = 2 * parent_i
+                r_child = 2 * parent_i + 1
 
-                if left_child < len(children_nodes):
-                    children_x, children_y = children_nodes[left_child]
-                    self.binary_tree_canvas.create_line(parent_x, parent_y, children_x, children_y, width = 1, tags = ("tree", "line"))
+                if l_child < len(child_n):
+                    child_x, child_y = child_n[l_child]
+                    self.binary_tree_canvas.create_line(parent_x, parent_y, child_x, child_y, width = 1, tags = ("tree", "line"))
 
-                if right_child < len(children_nodes):
-                    children_x, children_y = children_nodes[right_child]
-                    self.binary_tree_canvas.create_line(parent_x, parent_y, children_x, children_y, width = 1, tags = ("tree", "line"))
+                if r_child < len(child_n):
+                    child_x, child_y = child_n[r_child]
+                    self.binary_tree_canvas.create_line(parent_x, parent_y, child_x, child_y, width = 1, tags = ("tree", "line"))
 
-            self.binary_tree_canvas.tag_lower("line")
-        
-        self.create_node_user_input(node_positions)
+        self.binary_tree_canvas.tag_lower("line")
+        return node_positions
 
+    def tree_visual_after_drawn(self):
         self.draw_tree_button.config(text = "Reset", command = self.reset_tree)
 
         self.preorder_traversal.state(["!disabled"])
         self.inorder_traversal.state(["!disabled"])
         self.postorder_traversal.state(["!disabled"])
+
+    def draw_tree(self):
+        self.tree_visual_reset()
+
+        levels = int(self.level_entry.get())
+        self.levels = levels
+
+        node_positions = self.tree_visual_build(levels)
+        self.create_node_user_input(node_positions)
+
+        self.tree_visual_after_drawn
 
 #------------------- Lets the user have a choice to reset the tree after creating one -------------------#
     def reset_tree(self):
@@ -378,11 +391,10 @@ class BinaryTreeApp:
             if not self.node_user_input:
                 return
         
-            values = self.get_node_entries(warning = False)
+            values = self.get_right_values(warning = False)
             if values is None:
                 return
-        
-            values = self.off_nodes(values, re_highlight = False)
+            
             self.current_values = values
 
         if self.clicked_circle is not None:
@@ -480,35 +492,18 @@ class BinaryTreeApp:
         return values
     
 #------------------- This will gray out the nodes under a node with a "?" entried by the user -------------------#
-    def off_nodes(self, values, re_highlight = True):
-        for index in range(len(values)):
-            if values[index] is None:
-                left = 2 * index + 1 # left child
-                right = 2 * index + 2 # right child
-
-                if left < len(values):
-                    values[left] = None
-
-                if right < len(values):
-                    values[right] = None
-
-        if re_highlight:
-            for index, value in enumerate(values):
-                if value is None:
-                    self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "lightgray")
-                    self.binary_tree_canvas.itemconfig(self.node_texts[index], text = "")
-
-                    self.node_user_input[index].delete(0, tk.END)
-                    self.node_user_input[index].state(["disabled"])
-
-                else: 
-                    self.binary_tree_canvas.itemconfig(self.node_circles[index], fill = "yellow")
-                    self.binary_tree_canvas.itemconfig(self.node_texts[index], text = value)
-
-                    self.node_user_input[index].state(["!disabled"])
+    def get_right_values(self, warning = False):
+        # this returns node values where '?' is treated as None and any descendants of it is also None 
+        values = self.get_node_entries(warning = warning)
+        if values is None:
+            return None
         
+        for index in range(len(values)):
+            if self.node_forced_off and index < len(self.node_forced_off) and self.node_forced_off[index]:
+                values[index] = None
+
         return values
-    
+
     def update_off_nodes(self):
         num = len(self.node_user_input)
         forced = [False] * num
@@ -687,13 +682,10 @@ class BinaryTreeApp:
             self.show_value.clear()
             self.traversal_result_label.config(text = "")
 
-        values = self.get_node_entries(warning = False)
-
+        values = self.get_right_values(warning = False)
         if values is None:
             return
-        
-        values = self.off_nodes(values, re_highlight = False)
-
+            
         self.current_values = values
         self.show_value.clear()
 
