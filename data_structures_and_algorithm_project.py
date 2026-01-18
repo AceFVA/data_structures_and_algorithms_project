@@ -44,6 +44,7 @@ class BinaryTreeApp:
         style.map("Inorder.TButton", background = [("active", "green")])
         style.configure("Postorder.TButton", foreground = "white", background = "purple")
         style.map("Postorder.TButton", background = [("active", "green")])
+        style.configure("Instructions.TButton", font = ("Segoe", 9, "underline"), relief = "flat", foreground = "blue")
 
 #------------------- Main Frame -------------------#
         self.main_frame = ttk.Frame(self.root)
@@ -51,6 +52,10 @@ class BinaryTreeApp:
         self.main_frame.grid_rowconfigure(0, weight = 1)
         self.main_frame.grid_columnconfigure(0, weight = 1)
         self.main_frame.grid_columnconfigure(1, weight = 0)
+
+#------------------- Instructions -------------------#
+        self.app_instructions = ttk.Button(self.main_frame, text = "How to use?", style = "Instructions.TButton", command = self.show_instructions)
+        self.app_instructions.grid(row = 1, column = 0, sticky = tk.E, padx = 10, pady = 5)
 
 #------------------- Canvas for Binary Tree Visualization -------------------#
         self.binary_tree_canvas = tk.Canvas(self.main_frame, bg = "white", borderwidth = 2, relief = tk.RIDGE)
@@ -110,6 +115,39 @@ class BinaryTreeApp:
         self.traversal_method_label.pack(pady = 5)
 
 #------------------- Control Buttons -------------------#
+    def show_instructions(self):
+        window = tk.Toplevel(self.root)
+        window.title("How to use?")
+        window.geometry("400x350")
+        window.resizable(False, False)
+
+        tk.Label(window, text = "INSTRUCTIONS", font = ("Segoe", 11)).pack(pady = (20, 0))
+        tk.Label(
+            window, 
+            text = (
+                "1. Select your desired level of Binary Tree.\n"
+                "2. Click 'Draw Tree' button to display the Binary Tree template.\n"
+                "3. Enter any value you want on each node.\n"
+                "4. Select a traversal method of you want.\n"
+                "5. You can select any node to display its information.\n"                    
+                "6. Wait for the traversal result and you're done!\n"
+            ), 
+            justify = "left"
+        ).pack(padx = 20, pady = 10)
+
+        tk.Label(window, text = "REMINDERS", font = ("Segoe", 11)).pack(pady = (5, 0))
+        tk.Label(
+            window,
+            text = (
+            "1. The maximum number of level is 5.\n"
+            "2. No node should be empty.\n"
+            "3. Enter '?' on any node that you want to switch off."
+            ),
+            justify = "left"
+        ).pack(padx = 20, pady = 10)
+
+        tk.Button(window, text = "Okay", command = window.destroy).pack(pady = 10)
+
     def control_buttons(self):
         # Select a level tab
         self.level_entry = ttk.Spinbox(self.selecting_level_box, from_= 1, to = 5, state = "readonly", width = 20, justify = "center")
@@ -151,8 +189,6 @@ class BinaryTreeApp:
         self.node_info_left_chld_val.grid(row = 4, column = 1, sticky = tk.W, padx = 10)
         self.node_info_right_chld_val = ttk.Label(self.displaying_selected_node_info, text = "?")
         self.node_info_right_chld_val.grid(row = 5, column = 1, sticky = tk.W, padx = 10)
-
-
         
 #------------------- Draws Binary Tree on Canvas based on user input -------------------#
     def draw_tree(self):
