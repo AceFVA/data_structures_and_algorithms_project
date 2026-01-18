@@ -27,6 +27,7 @@ class BinaryTreeApp:
         self.clicked_circle = None
         self.info_color = "black"
         self.node_forced_off = []
+        self.resize_after_id = None
 
         self.root.grid_rowconfigure(0, weight = 1)
         self.root.grid_rowconfigure(1, weight = 0)
@@ -364,14 +365,27 @@ class BinaryTreeApp:
         if not self.node_user_input:
             return
 
-        values = []
-        for entry in self.node_user_input:
-            values.append(entry.get())
+        if self.resize_after_id is not None:
+            self.root.after_cancel(self.resize_after_id)
+            self.resize_after_id = None
+
+        self.resize_after_id = self.root.after(150, self.preserve_inputs_after_redraw)
+
+    def preserve_inputs_after_redraw(self):
+        self.resize_after_id = None
+
+        if not self.node_user_input:
+            return
+        
+        saved_inputs = [entry.get() for entry in self.node_user_input]
 
         self.draw_tree()
-        
-        for entry, value in zip(self.node_user_input, values):
+
+        for entry, value in zip(self.node_user_input, saved_inputs):
+            entry.delete(0, tk.END)
             entry.insert(0, value)
+
+        self.update_off_nodes()
 
 #------------------- displays the information about the clicked node -------------------#
     def show_node_details(self, index):
