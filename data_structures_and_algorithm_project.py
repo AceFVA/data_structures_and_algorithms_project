@@ -475,7 +475,7 @@ class BinaryTreeApp:
                 values.append("")
                 continue
 
-            values.append(values)
+            values.append(value)
 
         return values
     
