@@ -38,6 +38,11 @@ class BinaryTreeApp:
         style = ttk.Style(self.root)
         style.theme_use("clam")
 
+        style.configure("White.TFrame", background = "white")
+        style.configure("White.TLabelframe", background = "white")
+        style.configure("White.TLabelframe.Label", background = "white", foreground = "black")
+        style.configure("White.TLabel", background = "white", foreground = "black")
+
         style.configure("DrawTree.TButton", foreground = "white", background = "green")
         style.map("DrawTree.TButton", background = [("active", "dark green")])
 
@@ -45,13 +50,13 @@ class BinaryTreeApp:
         style.map("Preorder.TButton", background = [("active", "lime")])
         style.configure("Inorder.TButton", foreground = "white", background = "orange")
         style.map("Inorder.TButton", background = [("active", "lime")])
-        style.configure("Postorder.TButton", foreground = "white", background = "purple")
+        style.configure("Postorder.TButton", foreground = "white", background = "deep pink")
         style.map("Postorder.TButton", background = [("active", "lime")])
         style.configure("Instructions.TButton", font = ("Segoe", 9, "underline"), relief = "flat", foreground = "blue", background = "white")
         style.configure("OffedNode.TEntry", fieldbackground = "lightgray", foreground = "gray")
 
 #------------------- Main Frame -------------------#
-        self.main_frame = ttk.Frame(self.root)
+        self.main_frame = ttk.Frame(self.root, style = "White.TFrame")
         self.main_frame.grid(row = 0, column = 0, sticky = tk.NSEW, padx = 10)
         self.main_frame.grid_rowconfigure(0, weight = 1)
         self.main_frame.grid_columnconfigure(0, weight = 1)
@@ -73,7 +78,7 @@ class BinaryTreeApp:
         self.binary_tree_canvas.coords(self.instructions_id, self.binary_tree_canvas.winfo_width() - 10, self.binary_tree_canvas.winfo_height() -10)
 
 #------------------- Control Buttons Frame -------------------#
-        self.button_frame = ttk.Frame(self.main_frame)
+        self.button_frame = ttk.Frame(self.main_frame, style = "White.TFrame")
         self.button_frame.config(width = 320)
         self.button_frame.grid(row = 0, column = 1, sticky = tk.NSEW, padx = (5, 0))
         self.button_frame.grid_propagate(0)
@@ -83,14 +88,14 @@ class BinaryTreeApp:
 
         self.button_frame.grid_columnconfigure(0, weight = 1)
 
-        self.selecting_level_box = ttk.LabelFrame(self.button_frame, text = "Select a level:")
+        self.selecting_level_box = ttk.LabelFrame(self.button_frame, text = "Select a level:", style = "White.TLabelframe")
         self.selecting_level_box.grid(row = 0, column = 0, sticky = tk.NSEW, padx = 15, pady = (10, 5))
 
-        self.selecting_traversal_box = ttk.LabelFrame(self.button_frame, text = "Select a traversal method:")
+        self.selecting_traversal_box = ttk.LabelFrame(self.button_frame, text = "Select a traversal method:", style = "White.TLabelframe")
         self.selecting_traversal_box.grid(row = 1, column = 0, sticky = tk.NSEW, padx = 15, pady = 5)
         self.selecting_traversal_box.columnconfigure(0, weight = 1)
 
-        self.displaying_selected_node_info = ttk.LabelFrame(self.button_frame, text = "Selected Node:")
+        self.displaying_selected_node_info = ttk.LabelFrame(self.button_frame, text = "Selected Node:", style = "White.TLabelframe")
         self.displaying_selected_node_info.grid(row = 2, column = 0, sticky = tk.NSEW, padx = 15, pady = (5, 10))
         self.displaying_selected_node_info.grid_columnconfigure(0, weight = 1)
         self.displaying_selected_node_info.grid_columnconfigure(1, weight = 2)
@@ -104,20 +109,20 @@ class BinaryTreeApp:
         self.top_separating_line = ttk.Separator(self.root, orient = "horizontal")
         self.top_separating_line.grid(row = 1, column = 0, sticky = tk.EW, padx = 10, pady = (6, 4))
 
-        self.traversal_result_frame = ttk.Frame(self.root)
+        self.traversal_result_frame = ttk.Frame(self.root, style = "White.TFrame")
         self.traversal_result_frame.configure(height = 160)
         self.traversal_result_frame.grid(row = 2, column = 0, sticky = tk.EW, padx = 10, pady = (0, 10))
         self.traversal_result_frame.grid_propagate(0)
 
-        self.traversal_title_label = ttk.Label(self.traversal_result_frame, text = "Traversal Result", font = ("Segoe UI", 14), anchor = "center", justify = "center")
+        self.traversal_title_label = ttk.Label(self.traversal_result_frame, text = "Traversal Result", style = "White.TLabel", font = ("Segoe UI", 14), anchor = "center", justify = "center")
         self.traversal_title_label.pack(pady = (5, 0), fill = tk.X)
-        self.traversal_warning_label = ttk.Label(self.traversal_result_frame, text = "\n", foreground = "red", anchor = "center", justify = "center")
+        self.traversal_warning_label = ttk.Label(self.traversal_result_frame, text = "\n", foreground = "red", style = "White.TLabel", anchor = "center", justify = "center")
         self.traversal_warning_label.pack(pady = (0, 5), fill = tk.X)
 
-        self.traversal_result_label = ttk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 28), anchor = "center", justify = "center")
+        self.traversal_result_label = ttk.Label(self.traversal_result_frame, text = "", style = "White.TLabel", font = ("Segoe", 28), anchor = "center", justify = "center")
         self.traversal_result_label.pack(pady = 5)
 
-        self.traversal_method_label = ttk.Label(self.traversal_result_frame, text = "", font = ("Segoe", 12), anchor = "center", justify = "center")
+        self.traversal_method_label = ttk.Label(self.traversal_result_frame, text = "", style = "White.TLabel", font = ("Segoe", 12), anchor = "center", justify = "center")
         self.traversal_method_label.pack(pady = 5)
 
 #------------------- Instructions -------------------#
@@ -174,11 +179,11 @@ class BinaryTreeApp:
         self.draw_tree_button = ttk.Button(self.selecting_level_box, text = "Draw Tree", width = 20, command = self.draw_tree, style = "DrawTree.TButton")
         self.draw_tree_button.pack(padx = 5, pady = 5)
 
-        self.warning_label = ttk.Label(self.selecting_level_box, text = "", foreground = "red")
+        self.warning_label = ttk.Label(self.selecting_level_box, text = "", foreground = "red", style = "White.TLabel")
         self.warning_label.pack(pady = 1)
 
         # Select traversal method tab
-        self.traversals_label = ttk.Label(self.selecting_traversal_box, text = "Traversals", font = ("Segoe UI", 11))
+        self.traversals_label = ttk.Label(self.selecting_traversal_box, text = "Traversals", font = ("Segoe UI", 11), style = "White.TLabel")
         self.traversals_label.grid(row = 0, column = 0, sticky = tk.NS, pady = (5, 20))
         self.preorder_traversal = ttk.Button(self.selecting_traversal_box, text = "Preorder", command = lambda: self.traversals("Preorder"), style = "Preorder.TButton")
         self.preorder_traversal.grid(row = 1, column = 0, sticky = tk.EW, padx = 20, pady = 5)
@@ -194,23 +199,23 @@ class BinaryTreeApp:
 
         # Selected Info tab
         # Column 0
-        self.node_info_title = ttk.Label(self.displaying_selected_node_info, text = "Node Information", font = ("Segoe", 11)).grid(row = 0, column = 0, columnspan = 2, sticky = tk.NS, pady=(5, 5))
-        self.node_info_index = ttk.Label(self.displaying_selected_node_info, text = "Node Index:").grid(row = 1, column = 0, sticky = tk.W, padx = 10)
-        self.node_info_value = ttk.Label(self.displaying_selected_node_info, text = "Node Value:").grid(row = 2, column = 0, sticky = tk.W, padx = 10)
-        self.node_info_parent = ttk.Label(self.displaying_selected_node_info, text = "Parent:").grid(row = 3, column = 0, sticky = tk.W, padx = 10)
-        self.node_info_left_chld = ttk.Label(self.displaying_selected_node_info, text = "Left Child:").grid(row = 4, column = 0, sticky = tk.W, padx = 10)
-        self.node_info_right_chld = ttk.Label(self.displaying_selected_node_info, text = "Right Child:").grid(row = 5, column = 0, sticky = tk.W, padx = 10)
+        self.node_info_title = ttk.Label(self.displaying_selected_node_info, text = "Node Information", style = "White.TLabel", font = ("Segoe", 11)).grid(row = 0, column = 0, columnspan = 2, sticky = tk.NS, pady=(5, 5))
+        self.node_info_index = ttk.Label(self.displaying_selected_node_info, text = "Node Index:", style = "White.TLabel").grid(row = 1, column = 0, sticky = tk.W, padx = 10)
+        self.node_info_value = ttk.Label(self.displaying_selected_node_info, text = "Node Value:", style = "White.TLabel").grid(row = 2, column = 0, sticky = tk.W, padx = 10)
+        self.node_info_parent = ttk.Label(self.displaying_selected_node_info, text = "Parent:", style = "White.TLabel").grid(row = 3, column = 0, sticky = tk.W, padx = 10)
+        self.node_info_left_chld = ttk.Label(self.displaying_selected_node_info, text = "Left Child:", style = "White.TLabel").grid(row = 4, column = 0, sticky = tk.W, padx = 10)
+        self.node_info_right_chld = ttk.Label(self.displaying_selected_node_info, text = "Right Child:", style = "White.TLabel").grid(row = 5, column = 0, sticky = tk.W, padx = 10)
 
         # Column 1
-        self.node_info_index_val = ttk.Label(self.displaying_selected_node_info, text = "?")
+        self.node_info_index_val = ttk.Label(self.displaying_selected_node_info, text = "?", style = "White.TLabel")
         self.node_info_index_val.grid(row = 1, column = 1, sticky = tk.W, padx = 10)
-        self.node_info_value_val = ttk.Label(self.displaying_selected_node_info, text = "?")
+        self.node_info_value_val = ttk.Label(self.displaying_selected_node_info, text = "?", style = "White.TLabel")
         self.node_info_value_val.grid(row = 2, column = 1, sticky = tk.W, padx = 10)
-        self.node_info_parent_val = ttk.Label(self.displaying_selected_node_info, text = "?")
+        self.node_info_parent_val = ttk.Label(self.displaying_selected_node_info, text = "?", style = "White.TLabel")
         self.node_info_parent_val.grid(row = 3, column = 1, sticky = tk.W, padx = 10)
-        self.node_info_left_chld_val = ttk.Label(self.displaying_selected_node_info, text = "?")
+        self.node_info_left_chld_val = ttk.Label(self.displaying_selected_node_info, text = "?", style = "White.TLabel")
         self.node_info_left_chld_val.grid(row = 4, column = 1, sticky = tk.W, padx = 10)
-        self.node_info_right_chld_val = ttk.Label(self.displaying_selected_node_info, text = "?")
+        self.node_info_right_chld_val = ttk.Label(self.displaying_selected_node_info, text = "?",  style = "White.TLabel")
         self.node_info_right_chld_val.grid(row = 5, column = 1, sticky = tk.W, padx = 10)
         
 #------------------- Draws Binary Tree on Canvas based on user input -------------------#
@@ -725,13 +730,14 @@ class BinaryTreeApp:
 
         elif method == "Postorder":
             result = self.postorder(values)
-            font_color = "violet"
+            font_color = "deep pink"
 
         if self.node_highlighter is not None:
             self.root.after_cancel(self.node_highlighter)
             self.node_highlighter = None
 
         self.info_color = font_color
+        self.current_color = font_color
         self.current_method = method
 
         self.traversal_result_label.config(text = "", foreground = self.info_color)
