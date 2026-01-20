@@ -11,8 +11,9 @@ from tkinter import ttk
 class AppMenu:
     def __init__(self, root):
         self.root = root
-        self.root.title("Data Structures and Algorithms")
+        self.root.title("Main Menu")
         self.root.geometry("450x650")
+        self.root.resizable(False,False)
 
         self.frame = ttk.Frame(root)
         self.frame.pack(fill = tk.BOTH, expand = True)
@@ -20,13 +21,12 @@ class AppMenu:
         tk.Label(self.frame, text = "WELCOME!", font = ("Comic Sans MS", 40)).pack(pady = (40, 40))
 
         tk.Label(self.frame, text = "Select an option:", font = ("Segoe", 10)).pack(pady = 10)
-        tk.Button(self.frame, text = "Parking Garage (Stack)", width = 20, font = ("Segoe", 11)).pack(pady = 5)
-        tk.Button(self.frame, text = "Parking Garage (Queue)", width = 20, font = ("Segoe", 11)).pack(pady = 5)
-        tk.Button(self.frame, text = "Binary Tree", width = 20, font = ("Segoe", 11), command = self.binarytree_start).pack(pady = 5)
-        tk.Button(self.frame, text = "Binary Search Tree", width = 20, font = ("Segoe", 11)).pack(pady = 5)
-        tk.Button(self.frame, text = "Towe of Hanoi", width = 20,  font = ("Segoe", 11)).pack(pady = 5)
+        tk.Button(self.frame, text = "Parking Garage", width = 20, bg = "deep pink", fg = "black", font = ("Segoe", 11)).pack(pady = 5)
+        tk.Button(self.frame, text = "Binary Tree", width = 20, bg = "blue", fg = "black", font = ("Segoe", 11), command = self.binarytree_start).pack(pady = 5)
+        tk.Button(self.frame, text = "Binary Search Tree", width = 20, bg = "yellow", fg = "black", font = ("Segoe", 11)).pack(pady = 5)
+        tk.Button(self.frame, text = "Tower of Hanoi", width = 20, bg = "orange", fg = "black", font = ("Segoe", 11)).pack(pady = 5)
 
-        tk.Button(self.frame, text = "Exit", width = 20, font = ("Segoe", 11), command = self.menu_exit).pack(pady = 5)
+        tk.Button(self.frame, text = "Exit", width = 20, bg = "black", fg = "white", font = ("Segoe", 11), command = self.menu_exit).pack(pady = 5)
 
     def binarytree_start(self):
         self.frame.destroy()
@@ -40,7 +40,13 @@ class BinaryTreeApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Binary Tree")
+        self.root.resizable(True, True)
+
+        self.root.state("normal")
+        self.root.geometry("1150x750")
+        self.root.update_idletasks()
         self.root.state("zoomed")
+
         self.node_user_input = []
         self.node_circles = []
         self.node_highlighter = None
@@ -91,8 +97,14 @@ class BinaryTreeApp:
 
 #------------------- Canvas for Binary Tree Visualization -------------------#
         self.binary_tree_canvas = tk.Canvas(self.main_frame, bg = "white", borderwidth = 2, relief = tk.RIDGE)
-        self.binary_tree_canvas.configure(width = 900, height = 600)
         self.binary_tree_canvas.grid(row = 0, column = 0, sticky = tk.NSEW, padx = (0, 5))
+        
+        self.binary_tree_title = self.binary_tree_canvas.create_text(0, 0, text = "Binary Tree Visualizer", font = ("Comic Sans MS", 20), fill = "black", anchor = tk.N)
+
+        self.root.update_idletasks()
+        canvas_width = self.binary_tree_canvas.winfo_width()
+
+        self.binary_tree_canvas.coords(self.binary_tree_title, canvas_width // 2, 20)
 
         # For adjusting window size
         self.levels = 0
@@ -281,7 +293,7 @@ class BinaryTreeApp:
         canvas_height = self.binary_tree_canvas.winfo_height()
 
         node_radius = 20
-        top_margin = max(50, canvas_height // (levels + 1) // 2)
+        top_margin = max(100, canvas_height // (levels + 1) // 2)
         vertical_spacing = max(60, min(100, (canvas_height - (top_margin + 40)) // max(1, levels))) 
 
         node_positions = [] # To store positions of nodes for drawing connections
@@ -388,6 +400,7 @@ class BinaryTreeApp:
 
 #------------------- Resizing Tree when window size changes -------------------#
     def on_tree_resize(self, event):
+        self.binary_tree_canvas.coords(self.binary_tree_title, event.width // 2, 20)
         self.binary_tree_canvas.coords(self.instructions_id, event.width - 10, event.height - 10)
 
         # Checck if the tree exists first
