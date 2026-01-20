@@ -12,25 +12,28 @@ class AppMenu:
     def __init__(self, root):
         self.root = root
         self.root.title("Data Structures and Algorithms")
-        self.root.state("zoomed")
+        self.root.geometry("450x650")
 
         self.frame = ttk.Frame(root)
         self.frame.pack(fill = tk.BOTH, expand = True)
 
-        style = ttk.Style(self.root)
-        style.configure("Button.TButton", font = ("Arial", 9))
+        tk.Label(self.frame, text = "WELCOME!", font = ("Comic Sans MS", 40)).pack(pady = (40, 40))
 
-        ttk.Label(self.frame, text = "WELCOME!")
+        tk.Label(self.frame, text = "Select an option:", font = ("Segoe", 10)).pack(pady = 10)
+        tk.Button(self.frame, text = "Parking Garage (Stack)", width = 20, font = ("Segoe", 11)).pack(pady = 5)
+        tk.Button(self.frame, text = "Parking Garage (Queue)", width = 20, font = ("Segoe", 11)).pack(pady = 5)
+        tk.Button(self.frame, text = "Binary Tree", width = 20, font = ("Segoe", 11), command = self.binarytree_start).pack(pady = 5)
+        tk.Button(self.frame, text = "Binary Search Tree", width = 20, font = ("Segoe", 11)).pack(pady = 5)
+        tk.Button(self.frame, text = "Towe of Hanoi", width = 20,  font = ("Segoe", 11)).pack(pady = 5)
 
-        ttk.Button(self.frame, text = "Parking Garage (Stack)", width = 20, style = "Button.TButton").pack(pady = (40, 5))
-        ttk.Button(self.frame, text = "Parking Garage (Queue)", width = 20, style = "Button.TButton").pack(pady = 5)
-        ttk.Button(self.frame, text = "Binary Tree", width = 20, command = self.binarytree_start, style = "Button.TButton").pack(pady = 5)
-        ttk.Button(self.frame, text = "Binary Search Tree", width = 20, style = "Button.TButton").pack(pady = 5)
-        ttk.Button(self.frame, text = "Towe of Hanoi", width = 20, style = "Button.TButton").pack(pady = 5)
+        tk.Button(self.frame, text = "Exit", width = 20, font = ("Segoe", 11), command = self.menu_exit).pack(pady = 5)
 
     def binarytree_start(self):
         self.frame.destroy()
         BinaryTreeApp(self.root)
+
+    def menu_exit(self):
+        self.root.destroy()
 
 #------------------- Binary Tree Application -------------------#
 class BinaryTreeApp:
