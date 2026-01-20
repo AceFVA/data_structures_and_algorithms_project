@@ -8,6 +8,30 @@
 import tkinter as tk
 from tkinter import ttk
 
+class AppMenu:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Data Structures and Algorithms")
+        self.root.state("zoomed")
+
+        self.frame = ttk.Frame(root)
+        self.frame.pack(fill = tk.BOTH, expand = True)
+
+        style = ttk.Style(self.root)
+        style.configure("Button.TButton", font = ("Arial", 9))
+
+        ttk.Label(self.frame, text = "WELCOME!")
+
+        ttk.Button(self.frame, text = "Parking Garage (Stack)", width = 20, style = "Button.TButton").pack(pady = (40, 5))
+        ttk.Button(self.frame, text = "Parking Garage (Queue)", width = 20, style = "Button.TButton").pack(pady = 5)
+        ttk.Button(self.frame, text = "Binary Tree", width = 20, command = self.binarytree_start, style = "Button.TButton").pack(pady = 5)
+        ttk.Button(self.frame, text = "Binary Search Tree", width = 20, style = "Button.TButton").pack(pady = 5)
+        ttk.Button(self.frame, text = "Towe of Hanoi", width = 20, style = "Button.TButton").pack(pady = 5)
+
+    def binarytree_start(self):
+        self.frame.destroy()
+        BinaryTreeApp(self.root)
+
 #------------------- Binary Tree Application -------------------#
 class BinaryTreeApp:
     def __init__(self, root):
@@ -746,5 +770,5 @@ class BinaryTreeApp:
         self.node_animation(result)
 
 root = tk.Tk()
-app = BinaryTreeApp(root)
+menu = AppMenu(root)
 root.mainloop()
