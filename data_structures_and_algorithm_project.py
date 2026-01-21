@@ -21,10 +21,10 @@ class AppMenu:
         tk.Label(self.frame, text = "WELCOME!", font = ("Comic Sans MS", 40)).pack(pady = (40, 40))
 
         tk.Label(self.frame, text = "Select an option:", font = ("Segoe", 10)).pack(pady = 10)
-        tk.Button(self.frame, text = "Parking Garage", width = 20, bg = "deep pink", fg = "black", font = ("Segoe", 11)).pack(pady = 5)
-        tk.Button(self.frame, text = "Binary Tree", width = 20, bg = "blue", fg = "black", font = ("Segoe", 11), command = self.binarytree_start).pack(pady = 5)
-        tk.Button(self.frame, text = "Binary Search Tree", width = 20, bg = "yellow", fg = "black", font = ("Segoe", 11)).pack(pady = 5)
-        tk.Button(self.frame, text = "Tower of Hanoi", width = 20, bg = "orange", fg = "black", font = ("Segoe", 11)).pack(pady = 5)
+        tk.Button(self.frame, text = "Parking Simulation", width = 20, bg = "#003049", fg = "white", font = ("Segoe", 11)).pack(pady = 5)
+        tk.Button(self.frame, text = "Binary Tree", width = 20, bg = "#d62828", fg = "white", font = ("Segoe", 11), command = self.binarytree_start).pack(pady = 5)
+        tk.Button(self.frame, text = "Binary Search Tree", width = 20, bg = "#f77f00", fg = "white", font = ("Segoe", 11)).pack(pady = 5)
+        tk.Button(self.frame, text = "Tower of Hanoi", width = 20, bg = "#fcbf49", fg = "white", font = ("Segoe", 11)).pack(pady = 5)
 
         tk.Button(self.frame, text = "Exit", width = 20, bg = "black", fg = "white", font = ("Segoe", 11), command = self.menu_exit).pack(pady = 5)
 
